@@ -1,17 +1,138 @@
 package org.sopt;
 
-//TIP 코드를 <b>실행</b>하려면 <shortcut actionId="Run"/>을(를) 누르거나
-// 에디터 여백에 있는 <icon src="AllIcons.Actions.Execute"/> 아이콘을 클릭하세요.
-public class Main {
-	public static void main(String[] args) {
-		//TIP 캐럿을 강조 표시된 텍스트에 놓고 <shortcut actionId="ShowIntentionActions"/>을(를) 누르면
-		// IntelliJ IDEA이(가) 수정을 제안하는 것을 확인할 수 있습니다.
-		System.out.printf("Hello and welcome!");
+import java.util.ArrayList;
+import java.util.List;
+import java.util.Scanner;
 
-		for (int i = 1; i <= 5; i++) {
-			//TIP <shortcut actionId="Debug"/>을(를) 눌러 코드 디버그를 시작하세요. 1개의 <icon src="AllIcons.Debugger.Db_set_breakpoint"/> 중단점을 설정해 드렸습니다
-			// 언제든 <shortcut actionId="ToggleLineBreakpoint"/>을(를) 눌러 중단점을 더 추가할 수 있습니다.
-			System.out.println("i = " + i);
+public class Main {
+
+	public static void main(String[] args) {
+		Scanner scanner = new Scanner(System.in);
+		List<Post> posts = new ArrayList<>();
+
+		while (true) {
+			System.out.println("\n=== 게시판 ===");
+			System.out.println("1. 게시글 작성");
+			System.out.println("2. 게시글 목록 조회");
+			System.out.println("3. 게시글 단건 조회");
+			System.out.println("4. 게시글 수정");
+			System.out.println("5. 게시글 삭제");
+			System.out.println("6. 종료");
+			System.out.print("선택: ");
+
+			int command = Integer.parseInt(scanner.nextLine());
+
+			switch (command) {
+				case 1:
+					// 게시글 작성
+					System.out.print("제목: ");
+					String title = scanner.nextLine();
+
+					System.out.print("내용: ");
+					String content = scanner.nextLine();
+
+					Post post = new Post(title, content);
+					posts.add(post);
+
+					System.out.println("게시글이 작성되었습니다.");
+					break;
+
+				case 2:
+					// 게시글 목록 조회
+					System.out.println("\n=== 게시글 목록 ===");
+
+					if (posts.isEmpty()) {
+						System.out.println("게시글이 없습니다.");
+						break;
+					}
+
+					for (int i = 0; i < posts.size(); i++) {
+						Post currentPost = posts.get(i);
+
+						System.out.println(
+							(i + 1) + ". " + currentPost.title
+						);
+					}
+					break;
+
+				case 3:
+					// 게시글 단건 조회
+					if (posts.isEmpty()) {
+						System.out.println("게시글이 없습니다.");
+						break;
+					}
+
+					System.out.print("조회할 게시글 번호: ");
+					int readIndex = Integer.parseInt(scanner.nextLine()) - 1;
+
+					if (readIndex < 0 || readIndex >= posts.size()) {
+						System.out.println("존재하지 않는 게시글입니다.");
+						break;
+					}
+
+					Post readPost = posts.get(readIndex);
+
+					System.out.println("\n=== 게시글 ===");
+					System.out.println("제목: " + readPost.title);
+					System.out.println("내용: " + readPost.content);
+					break;
+
+				case 4:
+					// 게시글 수정
+					if (posts.isEmpty()) {
+						System.out.println("게시글이 없습니다.");
+						break;
+					}
+
+					System.out.print("수정할 게시글 번호: ");
+					int updateIndex = Integer.parseInt(scanner.nextLine()) - 1;
+
+					if (updateIndex < 0 || updateIndex >= posts.size()) {
+						System.out.println("존재하지 않는 게시글입니다.");
+						break;
+					}
+
+					Post updatePost = posts.get(updateIndex);
+
+					System.out.print("새로운 제목: ");
+					String newTitle = scanner.nextLine();
+
+					System.out.print("새로운 내용: ");
+					String newContent = scanner.nextLine();
+
+					updatePost.title = newTitle;
+					updatePost.content = newContent;
+
+					System.out.println("게시글이 수정되었습니다.");
+					break;
+
+				case 5:
+					// 게시글 삭제
+					if (posts.isEmpty()) {
+						System.out.println("게시글이 없습니다.");
+						break;
+					}
+
+					System.out.print("삭제할 게시글 번호: ");
+					int deleteIndex = Integer.parseInt(scanner.nextLine()) - 1;
+
+					if (deleteIndex < 0 || deleteIndex >= posts.size()) {
+						System.out.println("존재하지 않는 게시글입니다.");
+						break;
+					}
+
+					posts.remove(deleteIndex);
+
+					System.out.println("게시글이 삭제되었습니다.");
+					break;
+
+				case 6:
+					System.out.println("프로그램을 종료합니다.");
+					return;
+
+				default:
+					System.out.println("잘못된 입력입니다.");
+			}
 		}
 	}
 }
