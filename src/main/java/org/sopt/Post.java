@@ -27,8 +27,4 @@ public class Post {
 	public void setContent(String content) {
 		this.content = content;
 	}
-
-	public Post create(String title, String content) {
-		return new Post(title, content);
-	}
 }

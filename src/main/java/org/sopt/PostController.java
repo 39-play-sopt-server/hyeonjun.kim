@@ -1,8 +1,5 @@
 package org.sopt;
 
-import java.util.ArrayList;
-import java.util.List;
-
 public class PostController {
 	private final PostView view;
 	private final PostModel model;
