@@ -1,9 +1,12 @@
-package org.sopt;
+package org.sopt.repository;
 
 import java.util.ArrayList;
 import java.util.List;
 
-public class PostModel {
+import org.sopt.entity.Post;
+
+public class PostRepository {
+
 	private final List<Post> posts = new ArrayList<>();
 
 	public void create(String title, String content) {

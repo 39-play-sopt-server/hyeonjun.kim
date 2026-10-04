@@ -1,11 +1,16 @@
 package org.sopt;
 
+import org.sopt.controller.PostController;
+import org.sopt.repository.PostRepository;
+import org.sopt.service.PostService;
+
 public class Main {
 
 	public static void main(String[] args) {
-		PostView view = new PostView();
-		PostModel model = new PostModel();
-		PostController controller = new PostController(view, model);
+		PostRepository repository = new PostRepository();
+		PostService service = new PostService(repository);
+		PostController controller = new PostController(service);
+
 		controller.run();
 	}
 }

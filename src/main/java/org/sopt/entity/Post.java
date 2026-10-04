@@ -1,4 +1,4 @@
-package org.sopt;
+package org.sopt.entity;
 
 public class Post {
 	private String title;
