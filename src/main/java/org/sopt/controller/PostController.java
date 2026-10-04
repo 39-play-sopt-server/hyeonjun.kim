@@ -28,8 +28,12 @@ public class PostController {
 					System.out.println("Enter content:");
 					String content = scanner.nextLine();
 
-					postService.createPost(title, content);
-					System.out.println("Post created");
+					try {
+						postService.createPost(title, content);
+						System.out.println("Post created");
+					} catch (IllegalArgumentException e) {
+						System.out.println(e.getMessage());
+					}
 				}
 				case 2 -> {
 					List<Post> posts = postService.readPosts();

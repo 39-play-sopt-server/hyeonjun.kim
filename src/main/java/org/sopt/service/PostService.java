@@ -13,6 +13,12 @@ public class PostService {
 	}
 
 	public void createPost(String title, String content) {
+		if (title.isBlank()) {
+			throw new IllegalArgumentException("Title cannot be empty");
+		}
+		if (content.isBlank()) {
+			throw new IllegalArgumentException("Content cannot be empty");
+		}
 		postRepository.create(title, content);
 	}
 
