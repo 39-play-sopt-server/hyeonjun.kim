@@ -3,6 +3,7 @@ package org.sopt.controller;
 import java.util.List;
 import java.util.Scanner;
 
+import org.sopt.entity.Category;
 import org.sopt.entity.Post;
 import org.sopt.service.PostService;
 
@@ -18,69 +19,80 @@ public class PostController {
 		while (true) {
 			showMenu();
 
-			int command = Integer.parseInt(scanner.nextLine());
+			try {
+				int command = Integer.parseInt(scanner.nextLine());
 
-			switch (command) {
-				case 1 -> {
-					System.out.println("Enter title:");
-					String title = scanner.nextLine();
+				switch (command) {
+					case 1 -> {
+						System.out.println("Enter category number (1. NOTICE, 2. FREE, 3. QUESTION)");
+						int categoryNumber = Integer.parseInt(scanner.nextLine());
 
-					System.out.println("Enter content:");
-					String content = scanner.nextLine();
+						Category category = switch (categoryNumber) {
+							case 1 -> Category.NOTICE;
+							case 2 -> Category.FREE;
+							case 3 -> Category.QUESTION;
+							default -> throw new IllegalArgumentException("Invalid category number");
+						};
 
-					try {
-						postService.createPost(title, content);
+						System.out.println("Enter title:");
+						String title = scanner.nextLine();
+
+						System.out.println("Enter content:");
+						String content = scanner.nextLine();
+
+						postService.createPost(title, content, category);
 						System.out.println("Post created");
-					} catch (IllegalArgumentException e) {
-						System.out.println(e.getMessage());
 					}
-				}
-				case 2 -> {
-					List<Post> posts = postService.readPosts();
+					case 2 -> {
+						List<Post> posts = postService.readPosts();
 
-					if (posts.isEmpty()) {
-						System.out.println("No posts found");
-					}
-					else {
-						System.out.println("Posts found");
-						for (int i = 0; i < posts.size(); i++) {
-							Post post = posts.get(i);
-							System.out.println((i + 1) +  "." + post.getTitle());
+						if (posts.isEmpty()) {
+							System.out.println("No posts found");
+						} else {
+							System.out.println("Posts found");
+							for (Post post : posts) {
+								System.out.println(post.getId() + ". " + post.getTitle());
+							}
 						}
 					}
+					case 3 -> {
+						System.out.println("Enter id:");
+						long id = Long.parseLong(scanner.nextLine());
+
+						Post post = postService.readPost(id);
+
+						System.out.println("title: " + post.getTitle());
+						System.out.println("content: " + post.getContent());
+						System.out.println("category: " + post.getCategory());
+					}
+					case 4 -> {
+						System.out.println("Enter id:");
+						long id = Long.parseLong(scanner.nextLine());
+
+						postService.readPost(id);
+
+						System.out.println("Enter title:");
+						String title = scanner.nextLine();
+
+						System.out.println("Enter content:");
+						String content = scanner.nextLine();
+
+						postService.updatePost(id, title, content);
+					}
+					case 5 -> {
+						System.out.println("Enter id:");
+						long id = Long.parseLong(scanner.nextLine());
+
+						postService.deletePost(id);
+					}
+					case 6 -> {
+						System.out.println("프로그램을 종료합니다.");
+						return;
+					}
+					default -> System.out.println("잘못된 입력입니다.");
 				}
-				case 3 -> {
-					System.out.println("Enter id:");
-					int id = Integer.parseInt(scanner.nextLine()) - 1;
-
-					Post post = postService.readPost(id);
-
-					System.out.println("title: " + post.getTitle());
-					System.out.println("content: " + post.getContent());
-				}
-				case 4 -> {
-					System.out.println("Enter id:");
-					int id = Integer.parseInt(scanner.nextLine()) - 1;
-
-					System.out.println("Enter title:");
-					String title = scanner.nextLine();
-
-					System.out.println("Enter content:");
-					String content = scanner.nextLine();
-
-					postService.updatePost(id, title, content);
-				}
-				case 5 -> {
-					System.out.println("Enter id:");
-					int id = Integer.parseInt(scanner.nextLine()) - 1;
-
-					postService.deletePost(id);
-				}
-				case 6 -> {
-					System.out.println("프로그램을 종료합니다.");
-					return;
-				}
-				default -> System.out.println("잘못된 입력입니다.");
+			} catch (IllegalArgumentException e) {
+				System.out.println(e.getMessage());
 			}
 		}
 	}
