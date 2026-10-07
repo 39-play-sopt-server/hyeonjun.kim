@@ -17,23 +17,21 @@ public class Post {
 		return id;
 	}
 
-	public Category getCategory() {
-		return category;
-	}
-
-	public String getTitle() {
-		return title;
-	}
-
-	public String getContent() {
-		return content;
-		}
-
 	public void setTitle(String title) {
 		this.title = title;
 	}
 
 	public void setContent(String content) {
 		this.content = content;
+	}
+
+	@Override
+	public String toString() {
+		return "Post{" +
+			"id=" + id +
+			", title='" + title + '\'' +
+			", content='" + content + '\'' +
+			", category=" + category +
+			'}';
 	}
 }

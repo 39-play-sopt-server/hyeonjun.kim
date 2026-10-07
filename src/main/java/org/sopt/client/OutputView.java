@@ -1,8 +1,6 @@
 package org.sopt.client;
 
-import java.util.List;
-
-import org.sopt.entity.Post;
+import org.sopt.response.ApiResponse;
 
 public class OutputView {
 	public void showMenu() {
@@ -28,29 +26,8 @@ public class OutputView {
 		System.out.println("Enter content:");
 	}
 
-	public void showCreatePostPrompt() {
-		System.out.println("Post created");
-	}
-
-	public void showPosts(List<Post> posts) {
-		if (posts.isEmpty()) {
-			System.out.println("No posts found");
-		} else {
-			System.out.println("Posts found");
-			for (Post post : posts) {
-				System.out.println(post.getId() + ". " + post.getTitle());
-			}
-		}
-	}
-
 	public void showIdPrompt() {
 		System.out.println("Enter post id:");
-	}
-
-	public void showPost(Post post) {
-		System.out.println("title: " + post.getTitle());
-		System.out.println("content: " + post.getContent());
-		System.out.println("category: " + post.getCategory());
 	}
 
 	public void showExitPrompt() {
@@ -63,5 +40,12 @@ public class OutputView {
 
 	public void showErrorMessage(IllegalArgumentException e) {
 		System.out.println(e.getMessage());
+	}
+
+	public void showResponse(ApiResponse<?> response) {
+		System.out.println("status: " + response.getStatus());
+		System.out.println("code: " + response.getCode());
+		System.out.println("message: " + response.getMessage());
+		System.out.println("data: " + response.getData());
 	}
 }

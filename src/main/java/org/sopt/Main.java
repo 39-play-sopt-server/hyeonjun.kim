@@ -5,9 +5,9 @@ import java.util.List;
 import org.sopt.client.InputReader;
 import org.sopt.client.OutputView;
 import org.sopt.controller.PostController;
-import org.sopt.entity.Category;
 import org.sopt.entity.Post;
 import org.sopt.repository.PostRepository;
+import org.sopt.response.ApiResponse;
 import org.sopt.service.PostService;
 
 public class Main {
@@ -31,39 +31,29 @@ public class Main {
 						outputView.showCategory();
 						int categoryNumber = inputReader.readInt();
 
-						Category category = switch (categoryNumber) {
-							case 1 -> Category.NOTICE;
-							case 2 -> Category.FREE;
-							case 3 -> Category.QUESTION;
-							default -> throw new IllegalArgumentException("Invalid category number");
-						};
-
 						outputView.showTitlePrompt();
 						String title = inputReader.readString();
 
 						outputView.showContentPrompt();
 						String content = inputReader.readString();
 
-						controller.createPost(title, content, category);
-						outputView.showCreatePostPrompt();
+						ApiResponse<Void> response = controller.createPost(title, content, categoryNumber);
+						outputView.showResponse(response);
 					}
 					case 2 -> {
-						List<Post> posts = controller.readPosts();
-						outputView.showPosts(posts);
+						ApiResponse<List<Post>> response = controller.readPosts();
+						outputView.showResponse(response);
 					}
 					case 3 -> {
 						outputView.showIdPrompt();
 						long id = inputReader.readLong();
 
-						Post post = controller.readPost(id);
-
-						outputView.showPost(post);
+						ApiResponse<Post> response = controller.readPost(id);
+						outputView.showResponse(response);
 					}
 					case 4 -> {
 						outputView.showIdPrompt();
 						long id = inputReader.readLong();
-
-						controller.readPost(id);
 
 						outputView.showTitlePrompt();
 						String title = inputReader.readString();
@@ -71,22 +61,29 @@ public class Main {
 						outputView.showContentPrompt();
 						String content = inputReader.readString();
 
-						controller.updatePost(id, title, content);
+						ApiResponse<Void> response = controller.updatePost(id, title, content);
+						outputView.showResponse(response);
 					}
 					case 5 -> {
 						outputView.showIdPrompt();
 						long id = inputReader.readLong();
 
-						controller.deletePost(id);
+						ApiResponse<Void> response = controller.deletePost(id);
+						outputView.showResponse(response);
 					}
 					case 6 -> {
-						outputView.showExitPrompt();
+						ApiResponse<Void> response = ApiResponse.success(200, "EXIT", "종료");
+						outputView.showResponse(response);
 						return;
 					}
-					default -> outputView.showInvalidInputPrompt();
+					default -> {
+						ApiResponse<Void> response = ApiResponse.failure(400, "INVALID_INPUT", "잘못된 입력입니다.");
+						outputView.showResponse(response);
+					}
 				}
 			} catch (IllegalArgumentException e) {
-				outputView.showErrorMessage(e);
+				ApiResponse<Void> response = ApiResponse.failure(400, "INVALID_INPUT", "잘못된 입력입니다.");
+				outputView.showResponse(response);
 			}
 		}
 	}

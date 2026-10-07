@@ -4,6 +4,8 @@ import java.util.List;
 
 import org.sopt.entity.Category;
 import org.sopt.entity.Post;
+import org.sopt.exception.InvalidPostException;
+import org.sopt.exception.PostNotFoundException;
 import org.sopt.repository.PostRepository;
 
 public class PostService {
@@ -14,13 +16,9 @@ public class PostService {
 	}
 
 	public void createPost(String title, String content, Category category) {
-		if (title.isBlank()) {
-			throw new IllegalArgumentException("Title cannot be empty");
+		if (title.isBlank() || content.isBlank()) {
+			throw new InvalidPostException();
 		}
-		if (content.isBlank()) {
-			throw new IllegalArgumentException("Content cannot be empty");
-		}
-
 		postRepository.create(title, content, category);
 	}
 
@@ -30,25 +28,22 @@ public class PostService {
 
 	public Post readPost(long id) {
 		return postRepository.findById(id)
-			.orElseThrow(() -> new IllegalArgumentException("Post with id " + id + " does not exist"));
+			.orElseThrow(PostNotFoundException::new);
 	}
 
 	public void updatePost(long id, String title, String content) {
-		if (title.isBlank()) {
-			throw new IllegalArgumentException("Title cannot be empty");
-		}
-		if (content.isBlank()) {
-			throw new IllegalArgumentException("Content cannot be empty");
+		if (title.isBlank() || content.isBlank()) {
+			throw new InvalidPostException();
 		}
 		Post post = postRepository.findById(id)
-			.orElseThrow(() -> new IllegalArgumentException("Post with id " + id + " does not exist"));
+			.orElseThrow(PostNotFoundException::new);
 		post.setTitle(title);
 		post.setContent(content);
 	}
 
 	public void deletePost(long id) {
 		Post post = postRepository.findById(id)
-				.orElseThrow(() -> new IllegalArgumentException("Post with id " + id + " does not exist"));
+				.orElseThrow(PostNotFoundException::new);
 		postRepository.deletePost(post);
 	}
 }
