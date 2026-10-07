@@ -4,7 +4,7 @@ public class Post {
 	private final Long id;
 	private String title;
 	private String content;
-	private Category category;
+	private final Category category;
 
 	public Post(Long id, String title, String content, Category category) {
 		this.id = id;
