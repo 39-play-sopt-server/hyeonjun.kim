@@ -8,6 +8,8 @@ import org.sopt.exception.InvalidCategoryException;
 import org.sopt.exception.InvalidPostException;
 import org.sopt.exception.PostNotFoundException;
 import org.sopt.response.ApiResponse;
+import org.sopt.response.ErrorCode;
+import org.sopt.response.SuccessCode;
 import org.sopt.service.PostService;
 
 public class PostController {
@@ -22,45 +24,45 @@ public class PostController {
 			Category category = Category.fromNumber(categoryNumber);
 
 			postService.createPost(title, content, category);
-			return ApiResponse.success(200, "POST_CREATED", "게시물 생성에 성공했습니다.");
+			return ApiResponse.success(SuccessCode.POST_CREATED);
 		} catch (InvalidPostException e) {
-			return ApiResponse.failure(400, "INVALID_POST", e.getMessage());
+			return ApiResponse.failure(ErrorCode.INVALID_POST);
 		} catch (InvalidCategoryException e) {
-			return ApiResponse.failure(400, "INVALID_CATEGORY", e.getMessage());
+			return ApiResponse.failure(ErrorCode.INVALID_CATEGORY);
 		}
 	}
 
 	public ApiResponse<List<Post>> readPosts() {
 		List<Post> posts = postService.readPosts();
-		return ApiResponse.success(200, "POST_LIST_FOUND", "게시글 목록 조회에 성공했습니다.", posts);
+		return ApiResponse.success(SuccessCode.POST_LIST_FOUND, posts);
 	}
 
 	public ApiResponse<Post> readPost(long id) {
 		try {
 			Post post = postService.readPost(id);
-			return ApiResponse.success(200, "POST_FOUND", "게시글 조회에 성공했습니다.", post);
+			return ApiResponse.success(SuccessCode.POST_FOUND, post);
 		} catch (PostNotFoundException e) {
-			return ApiResponse.failure(404, "POST_NOT_FOUND", e.getMessage());
+			return ApiResponse.failure(ErrorCode.POST_NOT_FOUND);
 		}
 	}
 
 	public ApiResponse<Void> updatePost(long id, String title, String content) {
 		try {
 			postService.updatePost(id, title, content);
-			return ApiResponse.success(200, "POST_UPDATED", "게시글 수정에 성공했습니다.");
+			return ApiResponse.success(SuccessCode.POST_UPDATED);
 		} catch (PostNotFoundException e) {
-			return ApiResponse.failure(404, "POST_NOT_FOUND", e.getMessage());
+			return ApiResponse.failure(ErrorCode.POST_NOT_FOUND);
 		} catch (InvalidPostException e) {
-			return ApiResponse.failure(400, "INVALID_POST", e.getMessage());
+			return ApiResponse.failure(ErrorCode.INVALID_POST);
 		}
 	}
 
 	public ApiResponse<Void> deletePost(long id) {
 		try {
 			postService.deletePost(id);
-			return ApiResponse.success(200, "POST_DELETED", "게시글 삭제에 성공했습니다.");
+			return ApiResponse.success(SuccessCode.POST_DELETED);
 		} catch (PostNotFoundException e) {
-			return ApiResponse.failure(404, "POST_NOT_FOUND", e.getMessage());
+			return ApiResponse.failure(ErrorCode.POST_NOT_FOUND);
 		}
 	}
 }

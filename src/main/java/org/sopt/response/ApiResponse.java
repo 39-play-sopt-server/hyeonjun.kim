@@ -13,16 +13,16 @@ public class ApiResponse<T> {
 		this.data = data;
 	}
 
-	public static <T> ApiResponse<T> success(int status, String code, String message, T data) {
-		return new ApiResponse<>(status, code, message, data);
+	public static <T> ApiResponse<T> success(SuccessCode successCode, T data) {
+		return new ApiResponse<>(successCode.getStatus(), successCode.toString(), successCode.getMessage(), data);
 	}
 
-	public static <T> ApiResponse<T> success(int status, String code, String message) {
-		return new ApiResponse<>(status, code, message, null);
+	public static <T> ApiResponse<T> success(SuccessCode successCode) {
+		return new ApiResponse<>(successCode.getStatus(), successCode.toString(), successCode.getMessage(), null);
 	}
 
-	public static <T> ApiResponse<T> failure(int status, String code, String message) {
-		return new ApiResponse<>(status, code, message, null);
+	public static <T> ApiResponse<T> failure(ErrorCode errorCode) {
+		return new ApiResponse<>(errorCode.getStatus(), errorCode.toString(), errorCode.getMessage(), null);
 	}
 
 	public int getStatus() {

@@ -1,7 +1,9 @@
 package org.sopt.exception;
 
+import org.sopt.response.ErrorCode;
+
 public class PostNotFoundException extends RuntimeException {
 	public PostNotFoundException() {
-		super("게시글이 존재하지 않습니다.");
+		super(ErrorCode.POST_NOT_FOUND.getMessage());
 	}
 }

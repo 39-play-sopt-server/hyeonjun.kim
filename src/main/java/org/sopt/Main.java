@@ -8,6 +8,8 @@ import org.sopt.controller.PostController;
 import org.sopt.entity.Post;
 import org.sopt.repository.PostRepository;
 import org.sopt.response.ApiResponse;
+import org.sopt.response.ErrorCode;
+import org.sopt.response.SuccessCode;
 import org.sopt.service.PostService;
 
 public class Main {
@@ -72,17 +74,17 @@ public class Main {
 						outputView.showResponse(response);
 					}
 					case 6 -> {
-						ApiResponse<Void> response = ApiResponse.success(200, "EXIT", "종료");
+						ApiResponse<Void> response = ApiResponse.success(SuccessCode.EXIT);
 						outputView.showResponse(response);
 						return;
 					}
 					default -> {
-						ApiResponse<Void> response = ApiResponse.failure(400, "INVALID_INPUT", "잘못된 입력입니다.");
+						ApiResponse<Void> response = ApiResponse.failure(ErrorCode.INVALID_INPUT);
 						outputView.showResponse(response);
 					}
 				}
 			} catch (IllegalArgumentException e) {
-				ApiResponse<Void> response = ApiResponse.failure(400, "INVALID_INPUT", "잘못된 입력입니다.");
+				ApiResponse<Void> response = ApiResponse.failure(ErrorCode.INVALID_INPUT);
 				outputView.showResponse(response);
 			}
 		}

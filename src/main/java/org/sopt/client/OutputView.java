@@ -30,18 +30,6 @@ public class OutputView {
 		System.out.println("Enter post id:");
 	}
 
-	public void showExitPrompt() {
-		System.out.println("프로그램을 종료합니다.");
-	}
-
-	public void showInvalidInputPrompt() {
-		System.out.println("잘못된 입력입니다.");
-	}
-
-	public void showErrorMessage(IllegalArgumentException e) {
-		System.out.println(e.getMessage());
-	}
-
 	public void showResponse(ApiResponse<?> response) {
 		System.out.println("status: " + response.getStatus());
 		System.out.println("code: " + response.getCode());
