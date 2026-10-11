@@ -8,7 +8,9 @@ import java.util.Optional;
 
 import org.sopt.entity.Category;
 import org.sopt.entity.Post;
+import org.springframework.stereotype.Repository;
 
+@Repository
 public class PostRepository {
 
 	private final Map<Long, Post> posts = new HashMap<>();

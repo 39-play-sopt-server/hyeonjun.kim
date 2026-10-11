@@ -17,6 +17,16 @@ public class Post {
 		return id;
 	}
 
+	public String getTitle() {
+		return title;
+	}
+	public String getContent() {
+		return content;
+	}
+	public Category getCategory() {
+		return category;
+	}
+
 	public void setTitle(String title) {
 		this.title = title;
 	}

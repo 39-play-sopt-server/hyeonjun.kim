@@ -7,7 +7,9 @@ import org.sopt.entity.Post;
 import org.sopt.exception.InvalidPostException;
 import org.sopt.exception.PostNotFoundException;
 import org.sopt.repository.PostRepository;
+import org.springframework.stereotype.Service;
 
+@Service
 public class PostService {
 	private final PostRepository postRepository;
 
