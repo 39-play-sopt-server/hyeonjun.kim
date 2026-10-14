@@ -18,7 +18,7 @@ public class PostRepository {
 	private long nextId = 1;
 
 	public void create(String title, String content, Category category) {
-		Post post = new Post(nextId++, title, content, category);
+		Post post = new Post(nextId++, title, content, category, 0L);
 		posts.put(post.getId(), post);
 	}
 
@@ -32,5 +32,9 @@ public class PostRepository {
 
 	public void deletePost(Post post) {
 		posts.remove(post.getId());
+	}
+
+	public void increaseViewCount(Post post) {
+		post.setViewCount(post.getViewCount() + 1);
 	}
 }

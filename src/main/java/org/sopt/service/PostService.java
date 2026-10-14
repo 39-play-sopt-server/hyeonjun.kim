@@ -29,8 +29,9 @@ public class PostService {
 	}
 
 	public Post readPost(long id) {
-		return postRepository.findById(id)
-			.orElseThrow(PostNotFoundException::new);
+		Post post = postRepository.findById(id).orElseThrow(PostNotFoundException::new);
+		postRepository.increaseViewCount(post);
+		return post;
 	}
 
 	public void updatePost(long id, String title, String content) {
