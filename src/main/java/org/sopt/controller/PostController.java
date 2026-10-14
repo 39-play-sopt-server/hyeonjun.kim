@@ -5,11 +5,7 @@ import java.util.Map;
 
 import org.sopt.entity.Category;
 import org.sopt.entity.Post;
-import org.sopt.exception.InvalidCategoryException;
-import org.sopt.exception.InvalidPostException;
-import org.sopt.exception.PostNotFoundException;
 import org.sopt.response.ApiResponse;
-import org.sopt.response.ErrorCode;
 import org.sopt.response.SuccessCode;
 import org.sopt.service.PostService;
 import org.springframework.http.ResponseEntity;
@@ -38,25 +34,13 @@ public class PostController {
 		String content = (String) body.get("content");
 		int categoryNumber = (Integer) body.get("categoryNumber");
 
-		try {
-			Category category = Category.fromNumber(categoryNumber);
+		Category category = Category.fromNumber(categoryNumber);
 
-			postService.createPost(title, content, category);
-			ApiResponse<Void> response = ApiResponse.success(SuccessCode.POST_CREATED);
-			return ResponseEntity
-				.status(response.getStatus())
-				.body(response);
-		} catch (InvalidPostException e) {
-			ApiResponse<Void> response = ApiResponse.failure(ErrorCode.INVALID_POST);
-			return ResponseEntity
-				.status(response.getStatus())
-				.body(response);
-		} catch (InvalidCategoryException e) {
-			ApiResponse<Void> response = ApiResponse.failure(ErrorCode.INVALID_CATEGORY);
-			return ResponseEntity
-				.status(response.getStatus())
-				.body(response);
-		}
+		postService.createPost(title, content, category);
+		ApiResponse<Void> response = ApiResponse.success(SuccessCode.POST_CREATED);
+		return ResponseEntity
+			.status(response.getStatus())
+			.body(response);
 	}
 
 	@GetMapping(path="posts")
@@ -71,18 +55,12 @@ public class PostController {
 	@GetMapping(path="post/{postId}")
 	public ResponseEntity<ApiResponse<Post>> readPost(
 		@PathVariable(name="postId") long id) {
-		try {
-			Post post = postService.readPost(id);
-			ApiResponse<Post> response = ApiResponse.success(SuccessCode.POST_FOUND, post);
-			return ResponseEntity
-				.status(response.getStatus())
-				.body(response);
-		} catch (PostNotFoundException e) {
-			ApiResponse<Post> response = ApiResponse.failure(ErrorCode.POST_NOT_FOUND);
-			return ResponseEntity
-				.status(response.getStatus())
-				.body(response);
-		}
+
+		Post post = postService.readPost(id);
+		ApiResponse<Post> response = ApiResponse.success(SuccessCode.POST_FOUND, post);
+		return ResponseEntity
+			.status(response.getStatus())
+			.body(response);
 	}
 
 	@PatchMapping(path="post/{postId}")
@@ -92,40 +70,21 @@ public class PostController {
 		String title = (String) body.get("title");
 		String content = (String) body.get("content");
 
-		try {
-			postService.updatePost(id, title, content);
-			ApiResponse<Void> response = ApiResponse.success(SuccessCode.POST_UPDATED);
-			return ResponseEntity
-				.status(response.getStatus())
-				.body(response);
-		} catch (PostNotFoundException e) {
-			ApiResponse<Void> response = ApiResponse.failure(ErrorCode.POST_NOT_FOUND);
-			return ResponseEntity
-				.status(response.getStatus())
-				.body(response);
-		} catch (InvalidPostException e) {
-			ApiResponse<Void> response = ApiResponse.failure(ErrorCode.INVALID_POST);
-			return ResponseEntity
-				.status(response.getStatus())
-				.body(response);
-		}
+		postService.updatePost(id, title, content);
+		ApiResponse<Void> response = ApiResponse.success(SuccessCode.POST_UPDATED);
+		return ResponseEntity
+			.status(response.getStatus())
+			.body(response);
 	}
 
 	@DeleteMapping(path="post/{postId}")
 	public ResponseEntity<ApiResponse<Void>> deletePost(
 		@PathVariable(name="postId") long id) {
-		try {
-			postService.deletePost(id);
-			ApiResponse<Void> response = ApiResponse.success(SuccessCode.POST_DELETED);
-			return ResponseEntity
-				.status(response.getStatus())
-				.body(response);
-		} catch (PostNotFoundException e) {
-			ApiResponse<Void> response = ApiResponse.failure(ErrorCode.POST_NOT_FOUND);
-			return ResponseEntity
-				.status(response.getStatus())
-				.body(response);
-		}
+		postService.deletePost(id);
+		ApiResponse<Void> response = ApiResponse.success(SuccessCode.POST_DELETED);
+		return ResponseEntity
+			.status(response.getStatus())
+			.body(response);
 	}
 }
 
