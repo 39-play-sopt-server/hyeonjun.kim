@@ -1,11 +1,27 @@
 package org.sopt.entity;
 
+import jakarta.persistence.Entity;
+import jakarta.persistence.GeneratedValue;
+import jakarta.persistence.GenerationType;
+import jakarta.persistence.Id;
+
+@Entity
 public class Post {
-	private final Long id;
+	@Id
+	@GeneratedValue(strategy= GenerationType.IDENTITY)
+	private Long id;
 	private String title;
 	private String content;
-	private final Category category;
-	private Long viewCount;
+	private Category category;
+	private Long viewCount = 0L;
+
+	protected Post() {}
+
+	public Post(String title, String content, Category category) {
+		this.title = title;
+		this.content = content;
+		this.category = category;
+	}
 
 	public Post(Long id, String title, String content, Category category, Long viewCount) {
 		this.id = id;

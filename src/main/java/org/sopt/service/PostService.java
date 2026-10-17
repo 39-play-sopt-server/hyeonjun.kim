@@ -21,16 +21,20 @@ public class PostService {
 		if (title == null || title.isBlank() || content == null || content.isBlank()) {
 			throw new InvalidPostException();
 		}
-		postRepository.create(title, content, category);
+
+		Post post = new Post(title, content, category);
+
+		postRepository.save(post);
 	}
 
 	public List<Post> readPosts() {
-		return postRepository.getPosts();
+		return postRepository.findAll();
 	}
 
 	public Post readPost(long id) {
 		Post post = postRepository.findById(id).orElseThrow(PostNotFoundException::new);
-		postRepository.increaseViewCount(post);
+		post.setViewCount(post.getViewCount() + 1);
+		postRepository.save(post);
 		return post;
 	}
 
@@ -40,13 +44,16 @@ public class PostService {
 		}
 		Post post = postRepository.findById(id)
 			.orElseThrow(PostNotFoundException::new);
+
 		post.setTitle(title);
 		post.setContent(content);
+
+		postRepository.save(post);
 	}
 
 	public void deletePost(long id) {
 		Post post = postRepository.findById(id)
 				.orElseThrow(PostNotFoundException::new);
-		postRepository.deletePost(post);
+		postRepository.delete(post);
 	}
 }

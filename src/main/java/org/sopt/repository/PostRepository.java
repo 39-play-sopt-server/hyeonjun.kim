@@ -8,7 +8,19 @@ import java.util.Optional;
 
 import org.sopt.entity.Category;
 import org.sopt.entity.Post;
+import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.stereotype.Repository;
+
+@Repository
+public interface PostRepository extends JpaRepository<Post, Long> {
+	Optional<Post> findById(Long id);
+
+	List<Post> findAll();
+
+	void deleteById(Long id);
+}
+
+/*
 
 @Repository
 public class PostRepository {
@@ -38,3 +50,4 @@ public class PostRepository {
 		post.setViewCount(post.getViewCount() + 1);
 	}
 }
+*/
