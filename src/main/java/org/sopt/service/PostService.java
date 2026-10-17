@@ -18,7 +18,7 @@ public class PostService {
 	}
 
 	public void createPost(String title, String content, Category category) {
-		if (title.isBlank() || content.isBlank()) {
+		if (title == null || title.isBlank() || content == null || content.isBlank()) {
 			throw new InvalidPostException();
 		}
 		postRepository.create(title, content, category);
@@ -29,12 +29,13 @@ public class PostService {
 	}
 
 	public Post readPost(long id) {
-		return postRepository.findById(id)
-			.orElseThrow(PostNotFoundException::new);
+		Post post = postRepository.findById(id).orElseThrow(PostNotFoundException::new);
+		postRepository.increaseViewCount(post);
+		return post;
 	}
 
 	public void updatePost(long id, String title, String content) {
-		if (title.isBlank() || content.isBlank()) {
+		if (title == null || title.isBlank() || content == null || content.isBlank()) {
 			throw new InvalidPostException();
 		}
 		Post post = postRepository.findById(id)
