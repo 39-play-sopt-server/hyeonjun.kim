@@ -11,6 +11,7 @@ import org.sopt.entity.Post;
 import org.sopt.response.ApiResponse;
 import org.sopt.response.SuccessCode;
 import org.sopt.service.PostService;
+import org.springframework.data.domain.Page;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
@@ -19,6 +20,7 @@ import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
 @RestController
@@ -45,9 +47,12 @@ public class PostController implements PostControllerDocs{
 	}
 
 	@GetMapping(path="/posts")
-	public ResponseEntity<ApiResponse<List<Post>>> readPosts() {
-		List<Post> posts = postService.readPosts();
-		ApiResponse<List<Post>> response = ApiResponse.success(SuccessCode.POST_LIST_FOUND, posts);
+	public ResponseEntity<ApiResponse<Page<Post>>> readPosts(
+		@RequestParam(defaultValue = "0") int page,
+		@RequestParam(defaultValue = "10") int size
+	) {
+		Page<Post> posts = postService.readPosts(page, size);
+		ApiResponse<Page<Post>> response = ApiResponse.success(SuccessCode.POST_LIST_FOUND, posts);
 		return ResponseEntity
 			.status(response.getStatus())
 			.body(response);

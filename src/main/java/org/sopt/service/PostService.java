@@ -12,6 +12,10 @@ import org.sopt.exception.PostNotFoundException;
 import org.sopt.exception.PostNotOwnedException;
 import org.sopt.repository.MemberRepository;
 import org.sopt.repository.PostRepository;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Pageable;
+import org.springframework.data.domain.Sort;
 import org.springframework.stereotype.Service;
 
 @Service
@@ -34,8 +38,9 @@ public class PostService {
 		postRepository.save(post);
 	}
 
-	public List<Post> readPosts() {
-		return postRepository.findAll();
+	public Page<Post> readPosts(int page, int size) {
+		Pageable pageable = PageRequest.of(page, size, Sort.by("createdAt").descending());
+		return postRepository.findAll(pageable);
 	}
 
 	public PostReadResponse readPost(long id) {

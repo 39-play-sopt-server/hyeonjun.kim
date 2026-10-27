@@ -8,6 +8,7 @@ import org.sopt.dto.request.PostUpdateRequest;
 import org.sopt.dto.response.PostReadResponse;
 import org.sopt.entity.Post;
 import org.sopt.response.ApiResponse;
+import org.springframework.data.domain.Page;
 import org.springframework.http.ResponseEntity;
 
 import io.swagger.v3.oas.annotations.Operation;
@@ -28,7 +29,7 @@ public interface PostControllerDocs {
 	@ApiResponses({
 		@io.swagger.v3.oas.annotations.responses.ApiResponse(responseCode = "200", description = "게시글 목록 조회에 성공했습니다.")
 	})
-	ResponseEntity<ApiResponse<List<Post>>> readPosts();
+	ResponseEntity<ApiResponse<Page<Post>>> readPosts(int page, int size);
 
 	@Operation(summary = "게시글 단건 조회", description = "id를 입력받아 게시글을 조회합니다.")
 	@ApiResponses({
