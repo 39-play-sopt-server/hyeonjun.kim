@@ -6,5 +6,6 @@ public record PostReadResponse(
 	String author,
 	String category,
 	String content,
-	Long viewCount
+	Long viewCount,
+	int likeCount
 ) {}

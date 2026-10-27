@@ -11,6 +11,7 @@ import org.sopt.exception.MemberNotFoundException;
 import org.sopt.exception.PostNotFoundException;
 import org.sopt.exception.PostNotOwnedException;
 import org.sopt.repository.MemberRepository;
+import org.sopt.repository.PostLikeRepository;
 import org.sopt.repository.PostRepository;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
@@ -22,10 +23,12 @@ import org.springframework.stereotype.Service;
 public class PostService {
 	private final PostRepository postRepository;
 	private final MemberRepository memberRepository;
+	private final PostLikeRepository postLikeRepository;
 
-	public PostService(PostRepository postRepository, MemberRepository memberRepository) {
+	public PostService(PostRepository postRepository, MemberRepository memberRepository, PostLikeRepository postLikeRepository) {
 		this.postRepository = postRepository;
 		this.memberRepository = memberRepository;
+		this.postLikeRepository = postLikeRepository;
 	}
 
 	public void createPost(Long memberId, String title, String content, Category category) {
@@ -46,6 +49,7 @@ public class PostService {
 	public PostReadResponse readPost(long id) {
 		Post post = postRepository.findById(id).orElseThrow(PostNotFoundException::new);
 		String name = post.getMember().getName();
+		int likeCount = postLikeRepository.countByPostId(id);
 		post.setViewCount(post.getViewCount() + 1);
 		postRepository.save(post);
 		return new PostReadResponse(
@@ -54,7 +58,8 @@ public class PostService {
 			name,
 			post.getCategory().name(),
 			post.getContent(),
-			post.getViewCount());
+			post.getViewCount(),
+			likeCount);
 	}
 
 	public void updatePost(Long memberId, Long postId, String title, String content) {

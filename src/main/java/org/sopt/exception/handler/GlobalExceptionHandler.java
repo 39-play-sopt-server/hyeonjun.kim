@@ -3,6 +3,8 @@ package org.sopt.exception.handler;
 import org.sopt.exception.InvalidCategoryException;
 import org.sopt.exception.InvalidPostException;
 import org.sopt.exception.MemberNotFoundException;
+import org.sopt.exception.PostLikeAlreadyExistException;
+import org.sopt.exception.PostLikeNotFoundException;
 import org.sopt.exception.PostNotFoundException;
 import org.sopt.exception.PostNotOwnedException;
 import org.sopt.response.ApiResponse;
@@ -42,6 +44,20 @@ public class GlobalExceptionHandler {
 	public ResponseEntity<ApiResponse<Void>> handlePostNotOwnedException(
 		PostNotOwnedException e) {
 		return errorResponse(ErrorCode.POST_NOT_OWNED);
+	}
+
+	@ExceptionHandler(PostLikeNotFoundException.class)
+	public ResponseEntity<ApiResponse<Void>> handlePostLikeNotFoundException(
+		PostLikeNotFoundException e
+	) {
+		return errorResponse(ErrorCode.POSTLIKE_NOT_FOUND);
+	}
+
+	@ExceptionHandler(PostLikeAlreadyExistException.class)
+	public ResponseEntity<ApiResponse<Void>> handlePostLikeAlreadyExistException(
+		PostLikeAlreadyExistException e
+	) {
+		return errorResponse(ErrorCode.POSTLIKE_ALREADY_EXIST);
 	}
 
 	private ResponseEntity<ApiResponse<Void>> errorResponse(ErrorCode errorCode) {
