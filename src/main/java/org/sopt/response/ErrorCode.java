@@ -4,7 +4,9 @@ public enum ErrorCode {
 	INVALID_POST(400, "제목/내용은 비어있을 수 없습니다."),
 	INVALID_CATEGORY(400, "카테고리는 1~3 중 선택해야합니다."),
 	POST_NOT_FOUND(404, "게시글이 존재하지 않습니다."),
-	INVALID_INPUT(400, "잘못된 입력입니다.");
+	INVALID_INPUT(400, "잘못된 입력입니다."),
+	MEMBER_NOT_FOUND(404, "멤버가 존재하지 않습니다."),
+	POST_NOT_OWNED(403, "본인이 작성한 게시글만 수정/삭제할 수 있습니다.");
 
 	private final int status;
 	private final String message;

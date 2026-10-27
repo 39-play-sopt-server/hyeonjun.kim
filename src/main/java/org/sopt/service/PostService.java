@@ -2,27 +2,34 @@ package org.sopt.service;
 
 import java.util.List;
 
+import org.sopt.dto.response.PostReadResponse;
 import org.sopt.entity.Category;
+import org.sopt.entity.Member;
 import org.sopt.entity.Post;
 import org.sopt.exception.InvalidPostException;
+import org.sopt.exception.MemberNotFoundException;
 import org.sopt.exception.PostNotFoundException;
+import org.sopt.exception.PostNotOwnedException;
+import org.sopt.repository.MemberRepository;
 import org.sopt.repository.PostRepository;
 import org.springframework.stereotype.Service;
 
 @Service
 public class PostService {
 	private final PostRepository postRepository;
+	private final MemberRepository memberRepository;
 
-	public PostService(PostRepository postRepository) {
+	public PostService(PostRepository postRepository, MemberRepository memberRepository) {
 		this.postRepository = postRepository;
+		this.memberRepository = memberRepository;
 	}
 
-	public void createPost(String title, String content, Category category) {
+	public void createPost(Long memberId, String title, String content, Category category) {
 		if (title == null || title.isBlank() || content == null || content.isBlank()) {
 			throw new InvalidPostException();
 		}
-
-		Post post = new Post(title, content, category);
+		Member member = memberRepository.findById(memberId).orElseThrow(MemberNotFoundException::new);
+		Post post = new Post(member, title, content, category);
 
 		postRepository.save(post);
 	}
@@ -31,19 +38,30 @@ public class PostService {
 		return postRepository.findAll();
 	}
 
-	public Post readPost(long id) {
+	public PostReadResponse readPost(long id) {
 		Post post = postRepository.findById(id).orElseThrow(PostNotFoundException::new);
+		String name = post.getMember().getName();
 		post.setViewCount(post.getViewCount() + 1);
 		postRepository.save(post);
-		return post;
+		return new PostReadResponse(
+			post.getId(),
+			post.getTitle(),
+			name,
+			post.getCategory().name(),
+			post.getContent(),
+			post.getViewCount());
 	}
 
-	public void updatePost(long id, String title, String content) {
+	public void updatePost(Long memberId, Long postId, String title, String content) {
 		if (title == null || title.isBlank() || content == null || content.isBlank()) {
 			throw new InvalidPostException();
 		}
-		Post post = postRepository.findById(id)
+		Post post = postRepository.findById(postId)
 			.orElseThrow(PostNotFoundException::new);
+
+		if (!post.getMember().getId().equals(memberId)) {
+			throw new PostNotOwnedException();
+		}
 
 		post.setTitle(title);
 		post.setContent(content);
@@ -51,9 +69,14 @@ public class PostService {
 		postRepository.save(post);
 	}
 
-	public void deletePost(long id) {
-		Post post = postRepository.findById(id)
+	public void deletePost(long memberId, long postId) {
+		Post post = postRepository.findById(postId)
 				.orElseThrow(PostNotFoundException::new);
+
+		if (!post.getMember().getId().equals(memberId)) {
+			throw new PostNotOwnedException();
+		}
+
 		postRepository.delete(post);
 	}
 }

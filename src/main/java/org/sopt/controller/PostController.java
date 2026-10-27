@@ -3,6 +3,9 @@ package org.sopt.controller;
 import java.util.List;
 import java.util.Map;
 
+import org.sopt.dto.request.PostCreateRequest;
+import org.sopt.dto.request.PostUpdateRequest;
+import org.sopt.dto.response.PostReadResponse;
 import org.sopt.entity.Category;
 import org.sopt.entity.Post;
 import org.sopt.response.ApiResponse;
@@ -27,23 +30,21 @@ public class PostController implements PostControllerDocs{
 		this.postService = postService;
 	}
 
-	@PostMapping(path="post")
+	@PostMapping(path="/member/{memberId}/post")
 	public ResponseEntity<ApiResponse<Void>> createPost(
-		@RequestBody Map<String, Object> body) {
-		String title = (String) body.get("title");
-		String content = (String) body.get("content");
-		int categoryNumber = (Integer) body.get("categoryNumber");
+		@RequestBody PostCreateRequest request,
+		@PathVariable Long memberId) {
 
-		Category category = Category.fromNumber(categoryNumber);
+		Category category = Category.fromNumber(request.categoryNumber());
 
-		postService.createPost(title, content, category);
+		postService.createPost(memberId, request.title(), request.content(), category);
 		ApiResponse<Void> response = ApiResponse.success(SuccessCode.POST_CREATED);
 		return ResponseEntity
 			.status(response.getStatus())
 			.body(response);
 	}
 
-	@GetMapping(path="posts")
+	@GetMapping(path="/posts")
 	public ResponseEntity<ApiResponse<List<Post>>> readPosts() {
 		List<Post> posts = postService.readPosts();
 		ApiResponse<List<Post>> response = ApiResponse.success(SuccessCode.POST_LIST_FOUND, posts);
@@ -52,35 +53,34 @@ public class PostController implements PostControllerDocs{
 			.body(response);
 	}
 
-	@GetMapping(path="post/{postId}")
-	public ResponseEntity<ApiResponse<Post>> readPost(
+	@GetMapping(path="/post/{postId}")
+	public ResponseEntity<ApiResponse<PostReadResponse>> readPost(
 		@PathVariable(name="postId") long id) {
-
-		Post post = postService.readPost(id);
-		ApiResponse<Post> response = ApiResponse.success(SuccessCode.POST_FOUND, post);
+		PostReadResponse postReadResponse = postService.readPost(id);
+		ApiResponse<PostReadResponse> response = ApiResponse.success(SuccessCode.POST_FOUND, postReadResponse);
 		return ResponseEntity
 			.status(response.getStatus())
 			.body(response);
 	}
 
-	@PatchMapping(path="post/{postId}")
+	@PatchMapping(path="/member/{memberId}/post/{postId}")
 	public ResponseEntity<ApiResponse<Void>> updatePost(
-		@PathVariable(name="postId") long id,
-		@RequestBody Map<String, Object> body) {
-		String title = (String) body.get("title");
-		String content = (String) body.get("content");
+		@PathVariable(name="postId") long postId,
+		@PathVariable(name="memberId") long memberId,
+		@RequestBody PostUpdateRequest request) {
 
-		postService.updatePost(id, title, content);
+		postService.updatePost(memberId, postId, request.title(), request.content());
 		ApiResponse<Void> response = ApiResponse.success(SuccessCode.POST_UPDATED);
 		return ResponseEntity
 			.status(response.getStatus())
 			.body(response);
 	}
 
-	@DeleteMapping(path="post/{postId}")
+	@DeleteMapping(path="/member/{memberId}/post/{postId}")
 	public ResponseEntity<ApiResponse<Void>> deletePost(
-		@PathVariable(name="postId") long id) {
-		postService.deletePost(id);
+		@PathVariable(name="memberId") long memberId,
+		@PathVariable(name="postId") long postId) {
+		postService.deletePost(memberId, postId);
 		ApiResponse<Void> response = ApiResponse.success(SuccessCode.POST_DELETED);
 		return ResponseEntity
 			.status(response.getStatus())

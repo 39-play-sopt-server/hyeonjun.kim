@@ -1,34 +1,41 @@
 package org.sopt.entity;
 
 import jakarta.persistence.Entity;
+import jakarta.persistence.EnumType;
+import jakarta.persistence.Enumerated;
+import jakarta.persistence.FetchType;
 import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.GenerationType;
 import jakarta.persistence.Id;
+import jakarta.persistence.JoinColumn;
+import jakarta.persistence.ManyToOne;
 
 @Entity
-public class Post {
+public class Post extends BaseEntity{
 	@Id
 	@GeneratedValue(strategy= GenerationType.IDENTITY)
 	private Long id;
+
 	private String title;
+
 	private String content;
+
+	@Enumerated(EnumType.STRING)
 	private Category category;
+
 	private Long viewCount = 0L;
+
+	@ManyToOne(fetch = FetchType.LAZY)
+	@JoinColumn(name = "member_id")
+	private Member member;
 
 	protected Post() {}
 
-	public Post(String title, String content, Category category) {
+	public Post(Member member, String title, String content, Category category) {
+		this.member = member;
 		this.title = title;
 		this.content = content;
 		this.category = category;
-	}
-
-	public Post(Long id, String title, String content, Category category, Long viewCount) {
-		this.id = id;
-		this.title = title;
-		this.content = content;
-		this.category = category;
-		this.viewCount = viewCount;
 	}
 
 	public Long getId() {
@@ -46,6 +53,9 @@ public class Post {
 	}
 	public Long getViewCount() {
 		return viewCount;
+	}
+	public Member getMember() {
+		return member;
 	}
 
 	public void setTitle(String title) {
