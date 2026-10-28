@@ -38,7 +38,7 @@ public class PostService {
 	}
 
 	public Page<PostsReadResponse> readPosts(int page, int size, Long memberId, Category category, String title) {
-		Pageable pageable = PageRequest.of(page, size, Sort.by("createdAt").descending());
+		Pageable pageable = PageRequest.of(page, size, Sort.by("createdAt", "id").descending());
 		return postRepository.findBySearchOption(pageable, memberId, category, title).map(PostsReadResponse::from);
 	}
 
