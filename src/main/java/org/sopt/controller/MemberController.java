@@ -1,6 +1,7 @@
 package org.sopt.controller;
 
 import org.sopt.dto.request.MemberCreateRequest;
+import org.sopt.dto.response.MemberCreateResponse;
 import org.sopt.response.ApiResponse;
 import org.sopt.response.SuccessCode;
 import org.sopt.service.MemberService;
@@ -22,11 +23,11 @@ public class MemberController {
 	public MemberController(MemberService memberService) {this.memberService = memberService;}
 
 	@PostMapping(path="/member")
-	public ResponseEntity<ApiResponse<Long>> createMember(
+	public ResponseEntity<ApiResponse<MemberCreateResponse>> createMember(
 		@Valid @RequestBody MemberCreateRequest request
 	) {
-		long id = memberService.createMember(request.name());
-		ApiResponse<Long> response = ApiResponse.success(SuccessCode.MEMBER_CREATED, id);
+		MemberCreateResponse memberCreateResponse = memberService.createMember(request.name());
+		ApiResponse<MemberCreateResponse> response = ApiResponse.success(SuccessCode.MEMBER_CREATED, memberCreateResponse);
 		return ResponseEntity
 			.status(response.getStatus())
 			.body(response);

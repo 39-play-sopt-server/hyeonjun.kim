@@ -1,5 +1,6 @@
 package org.sopt.service;
 
+import org.sopt.dto.response.MemberCreateResponse;
 import org.sopt.entity.Member;
 import org.sopt.exception.MemberNotFoundException;
 import org.sopt.repository.MemberRepository;
@@ -11,10 +12,10 @@ public class MemberService {
 
 	public MemberService(MemberRepository memberRepository) {this.memberRepository = memberRepository;}
 
-	public long createMember(String name) {
+	public MemberCreateResponse createMember(String name) {
 		Member member = new Member(name);
 		memberRepository.save(member);
-		return member.getId();
+		return new MemberCreateResponse(member.getId());
 	}
 
 	public void deleteMember(Long id) {

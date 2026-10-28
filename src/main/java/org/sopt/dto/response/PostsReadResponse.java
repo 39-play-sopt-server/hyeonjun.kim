@@ -3,7 +3,7 @@ package org.sopt.dto.response;
 import org.sopt.entity.Post;
 
 public record PostsReadResponse(
-	Long id,
+	Long postId,
 	String title
 ) {
 	public static PostsReadResponse from(Post post) {
