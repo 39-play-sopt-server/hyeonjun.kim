@@ -6,10 +6,10 @@ public enum SuccessCode {
 	POST_LIST_FOUND(200, "게시글 목록 조회에 성공했습니다."),
 	POST_FOUND(200, "게시글 조회에 성공했습니다."),
 	POST_UPDATED(200, "게시글 수정에 성공했습니다."),
-	POST_DELETED(204, "게시글 삭제에 성공했습니다."),
-	MEMBER_DELETED(204, "멤버 삭제에 성공했습니다."),
+	POST_DELETED(200, "게시글 삭제에 성공했습니다."),
+	MEMBER_DELETED(200, "멤버 삭제에 성공했습니다."),
 	POSTLIKE_CREATED(201, "좋아요 생성에 성공했습니다."),
-	POSTLIKE_DELETED(204, "좋아요 삭제에 성공했습니다."),
+	POSTLIKE_DELETED(200, "좋아요 삭제에 성공했습니다."),
 	EXIT(200, "종료");
 
 	private final int status;
