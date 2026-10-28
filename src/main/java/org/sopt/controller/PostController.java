@@ -5,7 +5,6 @@ import org.sopt.dto.request.PostUpdateRequest;
 import org.sopt.dto.response.PostReadResponse;
 import org.sopt.dto.response.PostsReadResponse;
 import org.sopt.entity.Category;
-import org.sopt.entity.Post;
 import org.sopt.response.ApiResponse;
 import org.sopt.response.SuccessCode;
 import org.sopt.service.PostService;

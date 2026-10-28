@@ -17,6 +17,7 @@ import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.domain.Sort;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
 @Service
 public class PostService {
@@ -71,6 +72,7 @@ public class PostService {
 		postRepository.save(post);
 	}
 
+	@Transactional
 	public void deletePost(long memberId, long postId) {
 		Post post = postRepository.findById(postId)
 				.orElseThrow(PostNotFoundException::new);
@@ -78,7 +80,7 @@ public class PostService {
 		if (!post.getMember().getId().equals(memberId)) {
 			throw new PostNotOwnedException();
 		}
-
+		postLikeRepository.deleteByPostId(postId);
 		postRepository.delete(post);
 	}
 }

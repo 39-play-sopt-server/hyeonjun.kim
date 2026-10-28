@@ -9,4 +9,6 @@ import org.springframework.stereotype.Repository;
 @Repository
 public interface PostRepository extends JpaRepository<Post, Long>, PostRepositoryCustom {
 	Page<Post> findAll(Pageable pageable);
+
+	void deleteByMemberId(long memberId);
 }
