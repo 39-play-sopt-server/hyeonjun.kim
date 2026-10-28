@@ -46,9 +46,12 @@ public class PostController implements PostControllerDocs{
 	@GetMapping(path="/posts")
 	public ResponseEntity<ApiResponse<Page<Post>>> readPosts(
 		@RequestParam(defaultValue = "0") int page,
-		@RequestParam(defaultValue = "10") int size
+		@RequestParam(defaultValue = "10") int size,
+		@RequestParam(required = false) Long memberId,
+		@RequestParam(required = false) String category,
+		@RequestParam(required = false) String title
 	) {
-		Page<Post> posts = postService.readPosts(page, size);
+		Page<Post> posts = postService.readPosts(page, size, memberId, category, title);
 		ApiResponse<Page<Post>> response = ApiResponse.success(SuccessCode.POST_LIST_FOUND, posts);
 		return ResponseEntity
 			.status(response.getStatus())

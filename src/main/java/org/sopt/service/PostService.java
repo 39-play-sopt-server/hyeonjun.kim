@@ -41,9 +41,9 @@ public class PostService {
 		postRepository.save(post);
 	}
 
-	public Page<Post> readPosts(int page, int size) {
+	public Page<Post> readPosts(int page, int size, Long memberId, String category, String title) {
 		Pageable pageable = PageRequest.of(page, size, Sort.by("createdAt").descending());
-		return postRepository.findAll(pageable);
+		return postRepository.findBySearchOption(pageable, memberId, category, title);
 	}
 
 	public PostReadResponse readPost(long id) {

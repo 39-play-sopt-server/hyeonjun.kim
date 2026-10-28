@@ -29,7 +29,7 @@ public interface PostControllerDocs {
 	@ApiResponses({
 		@io.swagger.v3.oas.annotations.responses.ApiResponse(responseCode = "200", description = "게시글 목록 조회에 성공했습니다.")
 	})
-	ResponseEntity<ApiResponse<Page<Post>>> readPosts(int page, int size);
+	ResponseEntity<ApiResponse<Page<Post>>> readPosts(int page, int size, Long memberId, String category, String title);
 
 	@Operation(summary = "게시글 단건 조회", description = "id를 입력받아 게시글을 조회합니다.")
 	@ApiResponses({
