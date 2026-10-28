@@ -42,19 +42,21 @@ public class PostService {
 		return postRepository.findBySearchOption(pageable, memberId, category, title).map(PostsReadResponse::from);
 	}
 
+	@Transactional
 	public PostReadResponse readPost(long id) {
 		Post post = postRepository.findById(id).orElseThrow(PostNotFoundException::new);
 		String name = post.getMember().getName();
 		int likeCount = postLikeRepository.countByPostId(id);
-		post.setViewCount(post.getViewCount() + 1);
-		postRepository.save(post);
+
+		postRepository.incrementViewCount(id);
+
 		return new PostReadResponse(
 			post.getId(),
 			post.getTitle(),
 			name,
 			post.getCategory().name(),
 			post.getContent(),
-			post.getViewCount(),
+			post.getViewCount() + 1,
 			likeCount);
 	}
 

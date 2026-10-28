@@ -18,6 +18,6 @@ public record PostCreateRequest(
 	@NotNull(message = "categoryNumber는 필수입니다.")
 	@Min(value = 1, message = "categoryNumber는 1 이상이어야 합니다.")
 	@Max(value = 3, message = "categoryNumber는 3 이하여야 합니다.")
-	int categoryNumber
+	Integer categoryNumber
 ) {
 }
