@@ -6,6 +6,8 @@ import java.util.Map;
 import org.sopt.dto.request.PostCreateRequest;
 import org.sopt.dto.request.PostUpdateRequest;
 import org.sopt.dto.response.PostReadResponse;
+import org.sopt.dto.response.PostsReadResponse;
+import org.sopt.entity.Category;
 import org.sopt.entity.Post;
 import org.sopt.response.ApiResponse;
 import org.springframework.data.domain.Page;
@@ -29,7 +31,7 @@ public interface PostControllerDocs {
 	@ApiResponses({
 		@io.swagger.v3.oas.annotations.responses.ApiResponse(responseCode = "200", description = "게시글 목록 조회에 성공했습니다.")
 	})
-	ResponseEntity<ApiResponse<Page<Post>>> readPosts(int page, int size, Long memberId, String category, String title);
+	ResponseEntity<ApiResponse<Page<PostsReadResponse>>> readPosts(int page, int size, Long memberId, Category category, String title);
 
 	@Operation(summary = "게시글 단건 조회", description = "id를 입력받아 게시글을 조회합니다.")
 	@ApiResponses({

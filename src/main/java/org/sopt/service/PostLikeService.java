@@ -28,12 +28,12 @@ public class PostLikeService {
 	}
 
 	public void addLike(long memberId, long postId) {
-		if (postLikeRepository.existsByMemberIdAndPostId(memberId, postId)) {
-			throw new PostLikeAlreadyExistException();
-		}
 		Member member = memberRepository.findById(memberId).orElseThrow(MemberNotFoundException::new);
 		Post post = postRepository.findById(postId).orElseThrow(PostNotFoundException::new);
 
+		if (postLikeRepository.existsByMemberIdAndPostId(memberId, postId)) {
+			throw new PostLikeAlreadyExistException();
+		}
 		postLikeRepository.save(new PostLike(member, post));
 	}
 

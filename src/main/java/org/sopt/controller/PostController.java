@@ -3,6 +3,7 @@ package org.sopt.controller;
 import org.sopt.dto.request.PostCreateRequest;
 import org.sopt.dto.request.PostUpdateRequest;
 import org.sopt.dto.response.PostReadResponse;
+import org.sopt.dto.response.PostsReadResponse;
 import org.sopt.entity.Category;
 import org.sopt.entity.Post;
 import org.sopt.response.ApiResponse;
@@ -20,6 +21,10 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
+import jakarta.validation.Valid;
+import jakarta.validation.constraints.Max;
+import jakarta.validation.constraints.Min;
+
 @RestController
 @RequestMapping(path="api/v1")
 public class PostController implements PostControllerDocs{
@@ -31,7 +36,7 @@ public class PostController implements PostControllerDocs{
 
 	@PostMapping(path="/member/{memberId}/post")
 	public ResponseEntity<ApiResponse<Void>> createPost(
-		@RequestBody PostCreateRequest request,
+		@Valid @RequestBody PostCreateRequest request,
 		@PathVariable Long memberId) {
 
 		Category category = Category.fromNumber(request.categoryNumber());
@@ -44,15 +49,15 @@ public class PostController implements PostControllerDocs{
 	}
 
 	@GetMapping(path="/posts")
-	public ResponseEntity<ApiResponse<Page<Post>>> readPosts(
-		@RequestParam(defaultValue = "0") int page,
-		@RequestParam(defaultValue = "10") int size,
+	public ResponseEntity<ApiResponse<Page<PostsReadResponse>>> readPosts(
+		@RequestParam(defaultValue = "0") @Min(0) int page,
+		@RequestParam(defaultValue = "10") @Min(1) @Max(100) int size,
 		@RequestParam(required = false) Long memberId,
-		@RequestParam(required = false) String category,
+		@RequestParam(required = false) Category category,
 		@RequestParam(required = false) String title
 	) {
-		Page<Post> posts = postService.readPosts(page, size, memberId, category, title);
-		ApiResponse<Page<Post>> response = ApiResponse.success(SuccessCode.POST_LIST_FOUND, posts);
+		Page<PostsReadResponse> posts = postService.readPosts(page, size, memberId, category, title);
+		ApiResponse<Page<PostsReadResponse>> response = ApiResponse.success(SuccessCode.POST_LIST_FOUND, posts);
 		return ResponseEntity
 			.status(response.getStatus())
 			.body(response);
@@ -72,7 +77,7 @@ public class PostController implements PostControllerDocs{
 	public ResponseEntity<ApiResponse<Void>> updatePost(
 		@PathVariable(name="postId") long postId,
 		@PathVariable(name="memberId") long memberId,
-		@RequestBody PostUpdateRequest request) {
+		@Valid @RequestBody PostUpdateRequest request) {
 
 		postService.updatePost(memberId, postId, request.title(), request.content());
 		ApiResponse<Void> response = ApiResponse.success(SuccessCode.POST_UPDATED);

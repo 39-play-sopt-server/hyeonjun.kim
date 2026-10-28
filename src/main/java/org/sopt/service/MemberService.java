@@ -1,6 +1,7 @@
 package org.sopt.service;
 
 import org.sopt.entity.Member;
+import org.sopt.exception.MemberNotFoundException;
 import org.sopt.repository.MemberRepository;
 import org.springframework.stereotype.Service;
 
@@ -17,6 +18,7 @@ public class MemberService {
 	}
 
 	public void deleteMember(Long id) {
-		memberRepository.deleteById(id);
+		Member member = memberRepository.findById(id).orElseThrow(MemberNotFoundException::new);
+		memberRepository.delete(member);
 	}
 }

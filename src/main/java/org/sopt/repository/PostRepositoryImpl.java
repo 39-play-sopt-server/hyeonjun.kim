@@ -27,7 +27,7 @@ public class PostRepositoryImpl extends QuerydslRepositorySupport implements Pos
 	}
 
 	@Override
-	public Page<Post> findBySearchOption(Pageable pageable, Long memberId, String category, String title) {
+	public Page<Post> findBySearchOption(Pageable pageable, Long memberId, Category category, String title) {
 		JPQLQuery<Post> query = queryFactory.selectFrom(post).where(eqMemberId(memberId), eqCategory(category), titleContains(title));
 
 		List<Post> posts = this.getQuerydsl().applyPagination(pageable, query).fetch();
@@ -41,11 +41,11 @@ public class PostRepositoryImpl extends QuerydslRepositorySupport implements Pos
 		return post.member.id.eq(memberId);
 	}
 
-	private BooleanExpression eqCategory(String category) {
-		if (category == null || category.isBlank()) {
+	private BooleanExpression eqCategory(Category category) {
+		if (category == null) {
 			return null;
 		}
-		return post.category.eq(Category.valueOf(category));
+		return post.category.eq(category);
 	}
 
 	private BooleanExpression titleContains(String title) {

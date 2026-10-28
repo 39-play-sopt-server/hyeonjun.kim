@@ -12,6 +12,8 @@ import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
+import jakarta.validation.Valid;
+
 @RestController
 @RequestMapping(path="api/v1")
 public class MemberController {
@@ -21,7 +23,7 @@ public class MemberController {
 
 	@PostMapping(path="/member")
 	public ResponseEntity<ApiResponse<Long>> createMember(
-		@RequestBody MemberCreateRequest request
+		@Valid @RequestBody MemberCreateRequest request
 	) {
 		long id = memberService.createMember(request.name());
 		ApiResponse<Long> response = ApiResponse.success(SuccessCode.MEMBER_CREATED, id);
@@ -31,7 +33,9 @@ public class MemberController {
 	}
 
 	@DeleteMapping(path="/member/{memberId}")
-	public ResponseEntity<ApiResponse<Void>> deleteMember(@PathVariable Long memberId) {
+	public ResponseEntity<ApiResponse<Void>> deleteMember(
+		@PathVariable Long memberId
+	) {
 		memberService.deleteMember(memberId);
 		ApiResponse<Void> response = ApiResponse.success(SuccessCode.MEMBER_DELETED);
 		return ResponseEntity

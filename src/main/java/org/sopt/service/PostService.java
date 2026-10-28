@@ -1,8 +1,7 @@
 package org.sopt.service;
 
-import java.util.List;
-
 import org.sopt.dto.response.PostReadResponse;
+import org.sopt.dto.response.PostsReadResponse;
 import org.sopt.entity.Category;
 import org.sopt.entity.Member;
 import org.sopt.entity.Post;
@@ -32,18 +31,14 @@ public class PostService {
 	}
 
 	public void createPost(Long memberId, String title, String content, Category category) {
-		if (title == null || title.isBlank() || content == null || content.isBlank()) {
-			throw new InvalidPostException();
-		}
 		Member member = memberRepository.findById(memberId).orElseThrow(MemberNotFoundException::new);
 		Post post = new Post(member, title, content, category);
-
 		postRepository.save(post);
 	}
 
-	public Page<Post> readPosts(int page, int size, Long memberId, String category, String title) {
+	public Page<PostsReadResponse> readPosts(int page, int size, Long memberId, Category category, String title) {
 		Pageable pageable = PageRequest.of(page, size, Sort.by("createdAt").descending());
-		return postRepository.findBySearchOption(pageable, memberId, category, title);
+		return postRepository.findBySearchOption(pageable, memberId, category, title).map(PostsReadResponse::from);
 	}
 
 	public PostReadResponse readPost(long id) {
@@ -63,9 +58,6 @@ public class PostService {
 	}
 
 	public void updatePost(Long memberId, Long postId, String title, String content) {
-		if (title == null || title.isBlank() || content == null || content.isBlank()) {
-			throw new InvalidPostException();
-		}
 		Post post = postRepository.findById(postId)
 			.orElseThrow(PostNotFoundException::new);
 
