@@ -1,5 +1,6 @@
 package org.sopt.entity;
 
+import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
 import jakarta.persistence.EnumType;
 import jakarta.persistence.Enumerated;
@@ -16,17 +17,21 @@ public class Post extends BaseEntity{
 	@GeneratedValue(strategy= GenerationType.IDENTITY)
 	private Long id;
 
+	@Column(nullable = false, length = 30)
 	private String title;
 
+	@Column(nullable = false, length = 10000)
 	private String content;
 
 	@Enumerated(EnumType.STRING)
+	@Column(nullable = false)
 	private Category category;
 
+	@Column(nullable = false)
 	private Long viewCount = 0L;
 
 	@ManyToOne(fetch = FetchType.LAZY)
-	@JoinColumn(name = "member_id")
+	@JoinColumn(name = "member_id", nullable = false)
 	private Member member;
 
 	protected Post() {}
