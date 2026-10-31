@@ -25,6 +25,10 @@ public class ApiResponse<T> {
 		return new ApiResponse<>(errorCode.getStatus(), errorCode.toString(), errorCode.getMessage(), null);
 	}
 
+	public static <T> ApiResponse<T> failure(ErrorCode errorCode, String message) {
+		return new ApiResponse<>(errorCode.getStatus(), errorCode.toString(), message, null);
+	}
+
 	public int getStatus() {
 		return status;
 	}

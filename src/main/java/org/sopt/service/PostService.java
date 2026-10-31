@@ -1,49 +1,72 @@
 package org.sopt.service;
 
-import java.util.List;
-
+import org.sopt.dto.response.PostReadResponse;
+import org.sopt.dto.response.PostsReadResponse;
 import org.sopt.entity.Category;
+import org.sopt.entity.Member;
 import org.sopt.entity.Post;
 import org.sopt.exception.InvalidPostException;
+import org.sopt.exception.MemberNotFoundException;
 import org.sopt.exception.PostNotFoundException;
+import org.sopt.exception.PostNotOwnedException;
+import org.sopt.repository.MemberRepository;
+import org.sopt.repository.PostLikeRepository;
 import org.sopt.repository.PostRepository;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Pageable;
+import org.springframework.data.domain.Sort;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
 @Service
 public class PostService {
 	private final PostRepository postRepository;
+	private final MemberRepository memberRepository;
+	private final PostLikeRepository postLikeRepository;
 
-	public PostService(PostRepository postRepository) {
+	public PostService(PostRepository postRepository, MemberRepository memberRepository, PostLikeRepository postLikeRepository) {
 		this.postRepository = postRepository;
+		this.memberRepository = memberRepository;
+		this.postLikeRepository = postLikeRepository;
 	}
 
-	public void createPost(String title, String content, Category category) {
-		if (title == null || title.isBlank() || content == null || content.isBlank()) {
-			throw new InvalidPostException();
-		}
-
-		Post post = new Post(title, content, category);
-
+	public void createPost(Long memberId, String title, String content, Category category) {
+		Member member = memberRepository.findById(memberId).orElseThrow(MemberNotFoundException::new);
+		Post post = new Post(member, title, content, category);
 		postRepository.save(post);
 	}
 
-	public List<Post> readPosts() {
-		return postRepository.findAll();
+	public Page<PostsReadResponse> readPosts(int page, int size, Long memberId, Category category, String title) {
+		Pageable pageable = PageRequest.of(page, size, Sort.by("createdAt", "id").descending());
+		return postRepository.findBySearchOption(pageable, memberId, category, title).map(PostsReadResponse::from);
 	}
 
-	public Post readPost(long id) {
+	@Transactional
+	public PostReadResponse readPost(long id) {
 		Post post = postRepository.findById(id).orElseThrow(PostNotFoundException::new);
-		post.setViewCount(post.getViewCount() + 1);
-		postRepository.save(post);
-		return post;
+		String name = post.getMember().getName();
+		int likeCount = postLikeRepository.countByPostId(id);
+
+		postRepository.incrementViewCount(id);
+
+		return new PostReadResponse(
+			post.getId(),
+			post.getTitle(),
+			name,
+			post.getCategory().name(),
+			post.getContent(),
+			post.getViewCount() + 1,
+			likeCount);
 	}
 
-	public void updatePost(long id, String title, String content) {
-		if (title == null || title.isBlank() || content == null || content.isBlank()) {
-			throw new InvalidPostException();
-		}
-		Post post = postRepository.findById(id)
+	public void updatePost(Long memberId, Long postId, String title, String content) {
+		Post post = postRepository.findById(postId)
 			.orElseThrow(PostNotFoundException::new);
+
+		if (!post.getMember().getId().equals(memberId)) {
+			throw new PostNotOwnedException();
+		}
 
 		post.setTitle(title);
 		post.setContent(content);
@@ -51,9 +74,15 @@ public class PostService {
 		postRepository.save(post);
 	}
 
-	public void deletePost(long id) {
-		Post post = postRepository.findById(id)
+	@Transactional
+	public void deletePost(long memberId, long postId) {
+		Post post = postRepository.findById(postId)
 				.orElseThrow(PostNotFoundException::new);
+
+		if (!post.getMember().getId().equals(memberId)) {
+			throw new PostNotOwnedException();
+		}
+		postLikeRepository.deleteByPostId(postId);
 		postRepository.delete(post);
 	}
 }
