@@ -5,17 +5,15 @@ FROM eclipse-temurin:21-jre
 # RUN : 명령어를 실행하는 지시어
 # apt-get update : 운영체제의 패키지 목록을 최신 상태로 갱신
 # apt-get install ... : curl 설치 -> curl http://.../health 요청 보내서 헬스체크 가능해짐
-RUN apt-get update && apt-get install -y --no-install-recommends curl && rm -rf /var/lib/apt/lists/*
-
 # 불필요한 패키지 목록 삭제해서 이미지 크기 줄이기
-RUN rm -rf /var/lib/apt/lists/*
+RUN apt-get update && apt-get install -y --no-install-recommends curl && rm -rf /var/lib/apt/lists/*
 
 # 작업 디렉토리 설정
 # 이후 실행되는 COPY, RUN, ENTRYPOINT 등의 명령어에서 상대 경로를 사용할 때 기준이 됨
 WORKDIR /app
 
 # 로컬의 jar파일을 이미지 내부로 복사 ( COPY {원본경로} {대상경로} )
-COPY hyeonjun.kim/build/libs/*SNAPSHOT.jar app.jar
+COPY build/libs/*SNAPSHOT.jar app.jar
 
 # 컨테이너 내부에서 애플리케이션이 8080포트 사용한다고 명시
 EXPOSE 8080
