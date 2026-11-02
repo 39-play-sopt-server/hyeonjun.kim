@@ -70,15 +70,31 @@ jobs:
     steps:
       # 2-1. EC2 서버 접속 및 도커 작업 처리
       - name: SSH로 EC2에 접속하여 도커 작업 처리하기
-        uses: appleboy/ssh-action@master
+        uses: appleboy/ssh-action@v1
         with:
           host: ${{ secrets.EC2_HOST }}
           username: ${{ secrets.EC2_USERNAME }}
           key: ${{ secrets.EC2_PRIVATE_KEY }}
-          script_stop: true
           script: |
-            docker stop $(docker ps -a -q)
-            docker rm $(docker ps -a -q)
-            docker pull ${{ secrets.DOCKER_USERNAME }}/app
-            docker run -d -p 8080:8080 --name app-container ${{ secrets.DOCKER_USERNAME }}/app
+            set -e
+            
+            IMAGE="${{ secrets.DOCKER_USERNAME }}/app:${{ github.sha }}"
+
+            # Docker 이미지 다운로드
+            docker pull "$IMAGE"
+  
+            # 기존 애플리케이션 컨테이너 삭제
+            docker rm -f app-container || true
+  
+            # 새로운 컨테이너 실행
+            docker run -d \
+            -p 8080:8080 \
+            --restart unless-stopped \
+            --name app-container \
+            "$IMAGE"
+  
+            # 컨테이너 상태 확인
+            docker ps -a
+  
+            # 사용하지 않는 이미지 정리
             docker image prune -f
