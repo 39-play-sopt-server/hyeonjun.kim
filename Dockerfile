@@ -8,7 +8,7 @@ FROM eclipse-temurin:21-jre
 RUN apt-get update && apt-get install -y --no-install-recommends curl && rm -rf /var/lib/apt/lists/*
 
 # 불필요한 패키지 목록 삭제해서 이미지 크기 줄이기
-rm -rf /var/lib/apt/lists/*
+RUN rm -rf /var/lib/apt/lists/*
 
 # 작업 디렉토리 설정
 # 이후 실행되는 COPY, RUN, ENTRYPOINT 등의 명령어에서 상대 경로를 사용할 때 기준이 됨
