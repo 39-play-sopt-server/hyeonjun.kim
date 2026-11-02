@@ -3,7 +3,7 @@ name: Java CI with Gradle
 # 0. workflow 실행 트리거
 on:
   push:
-    branches: [ "feat/#15/4차과제구현" ]
+    branches: [ "feat/#15/4차과제구" ]
   # workflow를 수동으로 실행하는 방식
   workflow_dispatch:
     inputs:
@@ -74,7 +74,7 @@ jobs:
         with:
           host: ${{ secrets.EC2_HOST }}
           username: ${{ secrets.EC2_USERNAME }}
-          key: ${{ secrets.SSH_PRIVATE_KEY }}
+          key: ${{ secrets.EC2_PRIVATE_KEY }}
           script_stop: true
           script: |
             docker stop $(docker ps -a -q)
