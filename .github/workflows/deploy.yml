@@ -4,7 +4,7 @@ name: Java CI with Gradle
 on:
   push:
     branches: [ "feat/#15/4차과제구현" ]
-  # workflow를 수동으로 실행하는 방식
+  # workflow를 수동으로 실행하는 방식임
   workflow_dispatch:
     inputs:
       testVariable:
