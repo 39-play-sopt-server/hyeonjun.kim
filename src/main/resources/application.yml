@@ -12,6 +12,7 @@ spring:
         format_sql: true
   jwt:
     access-token-expiration: 1800000
+    refresh-token-expiration: 604800000
 
 server:
   forward-headers-strategy: framework

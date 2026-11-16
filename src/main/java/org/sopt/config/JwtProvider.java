@@ -16,33 +16,69 @@ import io.jsonwebtoken.security.Keys;
 public class JwtProvider {
 	private final SecretKey secretKey;
 	private final long accessTokenExpiration;
+	private final long refreshTokenExpiration;
 
 	public JwtProvider(
 		@Value("${spring.jwt.secret}") String secret,
-		@Value("${spring.jwt.access-token-expiration}") long accessTokenExpiration
+		@Value("${spring.jwt.access-token-expiration}") long accessTokenExpiration,
+		@Value("${spring.jwt.refresh-token-expiration}") long refreshTokenExpiration
 	) {
 		this.secretKey = Keys.hmacShaKeyFor(Decoders.BASE64.decode(secret));
 		this.accessTokenExpiration = accessTokenExpiration;
+		this.refreshTokenExpiration = refreshTokenExpiration;
 	}
 
-	public String createAccessToken(Long memberId) {
+	public String createToken(Long memberId, String type, long expiration) {
 		Date now = new Date();
+		Date expirationDate = new Date(now.getTime() + expiration);
 
 		return Jwts.builder()
-			.subject(String.valueOf(memberId))   // 누구의 토큰인지
-			.issuedAt(now)                       // 발급 시각
-			.expiration(new Date(now.getTime() + accessTokenExpiration)) // 만료 시각
-			.signWith(secretKey)                 // 서명
+			.subject(String.valueOf(memberId))
+			.claim("type", type)
+			.issuedAt(now)
+			.expiration(expirationDate)
+			.signWith(secretKey)
 			.compact();
 	}
 
-	public Long getMemberId(String token) {
-		Claims claims = Jwts.parser()
+	public String createAccessToken(Long memberId) {
+		return createToken(memberId, "ACCESS",  accessTokenExpiration);
+	}
+
+	public String createRefreshToken(Long memberId) {
+		return createToken(memberId, "REFRESH",  refreshTokenExpiration);
+	}
+
+	public Claims parseClaims(String token) {
+		return Jwts.parser()
 			.verifyWith(secretKey)
 			.build()
 			.parseSignedClaims(token)  // 서명, 만료 검증 → 실패 시 JwtException
 			.getPayload();
+	}
 
-		return Long.valueOf(claims.getSubject());
+	public Long getMemberId(String token) {
+		return Long.valueOf(parseClaims(token).getSubject());
+	}
+
+	public String getTokenType(String token) {
+		return parseClaims(token).get("type", String.class);
+	}
+
+	public boolean validateToken(String token) {
+		try {
+			parseClaims(token);
+			return true;
+		} catch (Exception e) {
+			return false;
+		}
+	}
+
+	public boolean isAccessToken(String token) {
+		return "ACCESS".equals(getTokenType(token));
+	}
+
+	public boolean isRefreshToken(String token) {
+		return "REFRESH".equals(getTokenType(token));
 	}
 }

@@ -1,10 +1,20 @@
 package org.sopt.controller;
 
+import java.time.Duration;
+
 import org.sopt.dto.request.LoginRequest;
 import org.sopt.dto.request.SignupRequest;
-import org.sopt.dto.response.LoginResponse;
+import org.sopt.dto.request.TokenReissueRequest;
+import org.sopt.dto.response.TokenResponse;
+import org.sopt.response.ApiResponse;
+import org.sopt.response.SuccessCode;
 import org.sopt.service.AuthService;
+import org.springframework.http.HttpHeaders;
+import org.springframework.http.HttpStatus;
+import org.springframework.http.ResponseCookie;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.core.annotation.AuthenticationPrincipal;
+import org.springframework.web.bind.annotation.CookieValue;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
@@ -26,8 +36,35 @@ public class AuthController {
 	}
 
 	@PostMapping("/login")
-	public ResponseEntity<LoginResponse> login(@RequestBody LoginRequest request) {
-		String accessToken = authService.login(request.email(), request.password());
-		return ResponseEntity.ok(new LoginResponse(accessToken));
+	public ResponseEntity<ApiResponse<Void>> login(@RequestBody LoginRequest request) {
+		TokenResponse tokenResponse = authService.login(request.email(), request.password());
+		return createTokenResponse(tokenResponse, SuccessCode.LOGIN_SUCCESS);
+	}
+
+	@PostMapping(path = "/reissue")
+	public ResponseEntity<ApiResponse<Void>> reissue(
+		@AuthenticationPrincipal Long memberId,
+		@CookieValue("refreshToken") String refreshToken) {
+		TokenResponse tokenResponse = authService.reissue(refreshToken);
+		return createTokenResponse(tokenResponse, SuccessCode.REISSUE_SUCCESS);
+	}
+
+	private ResponseEntity<ApiResponse<Void>> createTokenResponse(
+		TokenResponse tokens,
+		SuccessCode successCode) {
+		ResponseCookie cookie = ResponseCookie
+			.from("refreshToken", tokens.refreshToken())
+			.httpOnly(true)
+			.secure(true)
+			.sameSite("Strict")
+			.path("/api/v1/auth")
+			.maxAge(Duration.ofDays(7))
+			.build();
+
+		return ResponseEntity
+			.status(HttpStatus.OK)
+			.header(HttpHeaders.AUTHORIZATION, "Bearer " + tokens.accessToken())
+			.header(HttpHeaders.SET_COOKIE, cookie.toString())
+			.body(ApiResponse.success(successCode));
 	}
 }

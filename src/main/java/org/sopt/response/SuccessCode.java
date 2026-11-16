@@ -10,6 +10,8 @@ public enum SuccessCode {
 	MEMBER_DELETED(200, "멤버 삭제에 성공했습니다."),
 	POSTLIKE_CREATED(201, "좋아요 생성에 성공했습니다."),
 	POSTLIKE_DELETED(200, "좋아요 삭제에 성공했습니다."),
+	LOGIN_SUCCESS(200, "로그인에 성공했습니다."),
+	REISSUE_SUCCESS(200, "토큰 재발급에 성공했습니다."),
 	EXIT(200, "종료");
 
 	private final int status;
