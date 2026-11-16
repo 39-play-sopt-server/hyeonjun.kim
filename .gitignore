@@ -42,5 +42,6 @@ bin/
 ### Mac OS ###
 .DS_Store
 
-### yml파일
-/src/main/resources/application.yml
+### 환경별 비공개 설정
+/src/main/resources/application-local.yml
+/src/main/resources/application-prod.yml

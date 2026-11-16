@@ -16,10 +16,26 @@ public class Member extends BaseEntity{
 	@Column(nullable = false, length = 30)
 	private String name;
 
+	@Column(nullable = false, unique = true)
+	private String email;
+
+	@Column(nullable = false)
+	private String password;
+
+	public String getEmail() {
+		return email;
+	}
+
+	public String getPassword() {
+		return password;
+	}
+
 	protected Member() {}
 
-	public Member(String name) {
+	public Member(String name, String email, String password) {
 		this.name = name;
+		this.email = email;
+		this.password = password;
 	}
 
 	public Long getId() {

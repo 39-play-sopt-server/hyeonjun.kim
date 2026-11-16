@@ -1,0 +1,17 @@
+spring:
+  application:
+    name: assignment
+  profiles:
+    default: local
+  jpa:
+    hibernate:
+      ddl-auto: update
+    show-sql: true
+    properties:
+      hibernate:
+        format_sql: true
+  jwt:
+    access-token-expiration: 1800000
+
+server:
+  forward-headers-strategy: framework
