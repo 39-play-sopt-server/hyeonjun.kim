@@ -25,11 +25,11 @@ public class MemberService {
 		this.postLikeRepository = postLikeRepository;
 	}
 
-	public MemberCreateResponse createMember(String name) {
-		Member member = new Member(name);
-		memberRepository.save(member);
-		return new MemberCreateResponse(member.getId());
-	}
+	// public MemberCreateResponse createMember(String name) {
+	// 	Member member = new Member(name);
+	// 	memberRepository.save(member);
+	// 	return new MemberCreateResponse(member.getId());
+	// }
 
 	@Transactional
 	public void deleteMember(Long id) {
