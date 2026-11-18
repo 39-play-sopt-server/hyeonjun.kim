@@ -1,12 +1,6 @@
 package org.sopt.exception.handler;
 
-import org.sopt.exception.InvalidCategoryException;
-import org.sopt.exception.InvalidPostException;
-import org.sopt.exception.MemberNotFoundException;
-import org.sopt.exception.PostLikeAlreadyExistException;
-import org.sopt.exception.PostLikeNotFoundException;
-import org.sopt.exception.PostNotFoundException;
-import org.sopt.exception.PostNotOwnedException;
+import org.sopt.exception.BaseException;
 import org.sopt.response.ApiResponse;
 import org.sopt.response.ErrorCode;
 import org.springframework.http.ResponseEntity;
@@ -21,48 +15,13 @@ import org.springframework.web.method.annotation.MethodArgumentTypeMismatchExcep
 @RestControllerAdvice
 public class GlobalExceptionHandler {
 
-	@ExceptionHandler(InvalidCategoryException.class)
-	public ResponseEntity<ApiResponse<Void>> handleInvalidCategoryException(
-		InvalidCategoryException e) {
-		return errorResponse(ErrorCode.INVALID_CATEGORY);
-	}
+	@ExceptionHandler(BaseException.class)
+	public ResponseEntity<ApiResponse<Void>> handleBaseException(BaseException e) {
+		ApiResponse<Void> response = ApiResponse.failure(e.getErrorCode());
 
-	@ExceptionHandler(InvalidPostException.class)
-	public ResponseEntity<ApiResponse<Void>> handleInvalidPostException(
-		InvalidPostException e) {
-		return errorResponse(ErrorCode.INVALID_POST);
-	}
-
-	@ExceptionHandler(PostNotFoundException.class)
-	public ResponseEntity<ApiResponse<Void>> handlePostNotFoundException(
-		PostNotFoundException e) {
-		return errorResponse(ErrorCode.POST_NOT_FOUND);
-	}
-
-	@ExceptionHandler(MemberNotFoundException.class)
-	public ResponseEntity<ApiResponse<Void>> handleMemberNotFoundException(
-		MemberNotFoundException e) {
-		return errorResponse(ErrorCode.MEMBER_NOT_FOUND);
-	}
-
-	@ExceptionHandler(PostNotOwnedException.class)
-	public ResponseEntity<ApiResponse<Void>> handlePostNotOwnedException(
-		PostNotOwnedException e) {
-		return errorResponse(ErrorCode.POST_NOT_OWNED);
-	}
-
-	@ExceptionHandler(PostLikeNotFoundException.class)
-	public ResponseEntity<ApiResponse<Void>> handlePostLikeNotFoundException(
-		PostLikeNotFoundException e
-	) {
-		return errorResponse(ErrorCode.POSTLIKE_NOT_FOUND);
-	}
-
-	@ExceptionHandler(PostLikeAlreadyExistException.class)
-	public ResponseEntity<ApiResponse<Void>> handlePostLikeAlreadyExistException(
-		PostLikeAlreadyExistException e
-	) {
-		return errorResponse(ErrorCode.POSTLIKE_ALREADY_EXIST);
+		return ResponseEntity
+			.status(response.getStatus())
+			.body(response);
 	}
 
 	@ExceptionHandler(MethodArgumentNotValidException.class)
