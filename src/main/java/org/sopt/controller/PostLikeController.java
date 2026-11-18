@@ -1,9 +1,11 @@
 package org.sopt.controller;
 
 import org.sopt.response.ApiResponse;
+import org.sopt.response.ErrorCode;
 import org.sopt.response.SuccessCode;
 import org.sopt.service.PostLikeService;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
@@ -21,8 +23,8 @@ public class PostLikeController {
 
 	@PostMapping(path="/postLike")
 	public ResponseEntity<ApiResponse<Void>> addLike(
-		@RequestParam long memberId,
-		@RequestParam long postId
+		@RequestParam long postId,
+		@AuthenticationPrincipal Long memberId
 	) {
 		postLikeService.addLike(memberId, postId);
 		ApiResponse<Void> response = ApiResponse.success(SuccessCode.POSTLIKE_CREATED, null);
@@ -33,8 +35,8 @@ public class PostLikeController {
 
 	@DeleteMapping(path="/postLike")
 	public ResponseEntity<ApiResponse<Void>> deleteLike(
-		@RequestParam long memberId,
-		@RequestParam long postId
+		@RequestParam long postId,
+		@AuthenticationPrincipal Long memberId
 	) {
 		postLikeService.deleteLike(memberId, postId);
 		ApiResponse<Void> response = ApiResponse.success(SuccessCode.POSTLIKE_DELETED, null);

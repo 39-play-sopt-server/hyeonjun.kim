@@ -18,16 +18,18 @@ public class RefreshToken extends BaseEntity {
 	private Long id;
 
 	@ManyToOne(fetch = FetchType.LAZY)
-	@JoinColumn(name = "member_id", nullable = false)
+	@JoinColumn(name = "member_id", nullable = false, unique = true)
 	private Member member;
 
 	private String tokenHash;
+	private String sessionId;
 
 	protected RefreshToken() {}
 
-	public RefreshToken(Member member, String tokenHash) {
+	public RefreshToken(Member member, String tokenHash, String sessionId) {
 		this.member = member;
 		this.tokenHash = tokenHash;
+		this.sessionId = sessionId;
 	}
 
 	public Long getId() {
@@ -42,7 +44,12 @@ public class RefreshToken extends BaseEntity {
 		return tokenHash;
 	}
 
-	public void updateTokenHash(String tokenHash) {
+	public String getSessionId() {
+		return sessionId;
+	}
+
+	public void updateToken(String tokenHash, String sessionId) {
 		this.tokenHash = tokenHash;
+		this.sessionId = sessionId;
 	}
 }

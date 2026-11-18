@@ -12,6 +12,8 @@ public enum SuccessCode {
 	POSTLIKE_DELETED(200, "좋아요 삭제에 성공했습니다."),
 	LOGIN_SUCCESS(200, "로그인에 성공했습니다."),
 	REISSUE_SUCCESS(200, "토큰 재발급에 성공했습니다."),
+	LOGOUT_SUCCESS(200, "로그아웃에 성공했습니다."),
+	WITHDRAW_SUCCESS(200, "회원 탈퇴에 성공했습니다."),
 	EXIT(200, "종료");
 
 	private final int status;

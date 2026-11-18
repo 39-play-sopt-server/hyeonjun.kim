@@ -1,6 +1,7 @@
 package org.sopt.config;
 
 import java.util.Date;
+import java.util.UUID;
 
 import javax.crypto.SecretKey;
 
@@ -34,6 +35,7 @@ public class JwtProvider {
 
 		return Jwts.builder()
 			.subject(String.valueOf(memberId))
+			.id(UUID.randomUUID().toString())
 			.claim("type", type)
 			.issuedAt(now)
 			.expiration(expirationDate)
@@ -41,8 +43,17 @@ public class JwtProvider {
 			.compact();
 	}
 
-	public String createAccessToken(Long memberId) {
-		return createToken(memberId, "ACCESS",  accessTokenExpiration);
+	public String createAccessToken(Long memberId, String sessionId) {
+		Date now = new Date();
+		return Jwts.builder()
+			.subject(String.valueOf(memberId))
+			.claim("type", "ACCESS")
+			.claim("sessionId", sessionId)
+			.id(UUID.randomUUID().toString())
+			.issuedAt(now)
+			.expiration(new Date(now.getTime() + accessTokenExpiration))
+			.signWith(secretKey)
+			.compact();
 	}
 
 	public String createRefreshToken(Long memberId) {
@@ -63,6 +74,10 @@ public class JwtProvider {
 
 	public String getTokenType(String token) {
 		return parseClaims(token).get("type", String.class);
+	}
+
+	public String getSessionId(String token) {
+		return parseClaims(token).get("sessionId", String.class);
 	}
 
 	public boolean validateToken(String token) {

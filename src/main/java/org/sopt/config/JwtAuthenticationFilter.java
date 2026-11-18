@@ -2,6 +2,7 @@ package org.sopt.config;
 
 import java.io.IOException;
 import java.util.List;
+import org.sopt.repository.RefreshTokenRepository;
 
 import org.springframework.http.HttpHeaders;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
@@ -19,9 +20,11 @@ public class JwtAuthenticationFilter extends OncePerRequestFilter {
 	private static final String BEARER_PREFIX = "Bearer ";
 
 	private final JwtProvider jwtProvider;
+	private final RefreshTokenRepository refreshTokenRepository;
 
-	public JwtAuthenticationFilter(JwtProvider jwtProvider) {
+	public JwtAuthenticationFilter(JwtProvider jwtProvider, RefreshTokenRepository refreshTokenRepository) {
 		this.jwtProvider = jwtProvider;
+		this.refreshTokenRepository = refreshTokenRepository;
 	}
 
 	@Override
@@ -32,7 +35,14 @@ public class JwtAuthenticationFilter extends OncePerRequestFilter {
 
 		if (token != null) {
 			try {
+				if (!jwtProvider.isAccessToken(token)) {
+					throw new JwtException("Access token이 아닙니다.");
+				}
 				Long memberId = jwtProvider.getMemberId(token);
+				String sessionId = jwtProvider.getSessionId(token);
+				if (sessionId == null || !refreshTokenRepository.existsByMemberIdAndSessionId(memberId, sessionId)) {
+					throw new JwtException("로그아웃되었거나 만료된 세션입니다.");
+				}
 
 				// 인증 완료된 Authentication 생성 후 SecurityContext에 저장
 				UsernamePasswordAuthenticationToken authentication =

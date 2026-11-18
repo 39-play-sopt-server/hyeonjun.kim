@@ -12,6 +12,7 @@ import org.sopt.entity.Post;
 import org.sopt.response.ApiResponse;
 import org.springframework.data.domain.Page;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestParam;
@@ -33,7 +34,7 @@ public interface PostControllerDocs {
 	})
 	ResponseEntity<ApiResponse<Void>> createPost(
 		@Valid @RequestBody PostCreateRequest request,
-		@PathVariable Long memberId);
+		@AuthenticationPrincipal Long memberId);
 
 	@Operation(summary = "게시글 목록 조회", description = "전체 게시글 목록을 조회합니다.")
 	@ApiResponses({
@@ -62,8 +63,8 @@ public interface PostControllerDocs {
 	})
 	ResponseEntity<ApiResponse<Void>> updatePost(
 		@PathVariable(name="postId") long postId,
-		@PathVariable(name="memberId") long memberId,
-		@Valid @RequestBody PostUpdateRequest request
+		@Valid @RequestBody PostUpdateRequest request,
+		@AuthenticationPrincipal Long memberId
 	);
 
 	@Operation(summary = "게시글 삭제", description = "id를 입력받아 해당 게시글을 삭제합니다.")
@@ -72,7 +73,7 @@ public interface PostControllerDocs {
 		@io.swagger.v3.oas.annotations.responses.ApiResponse(responseCode = "404", description = "게시글이 존재하지 않습니다.")
 	})
 	ResponseEntity<ApiResponse<Void>> deletePost(
-		@PathVariable(name="memberId") long memberId,
-		@PathVariable(name="postId") long postId
+		@PathVariable(name="postId") long postId,
+		@AuthenticationPrincipal Long memberId
 	);
 }

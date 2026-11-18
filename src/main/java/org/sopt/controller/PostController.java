@@ -6,10 +6,12 @@ import org.sopt.dto.response.PostReadResponse;
 import org.sopt.dto.response.PostsReadResponse;
 import org.sopt.entity.Category;
 import org.sopt.response.ApiResponse;
+import org.sopt.response.ErrorCode;
 import org.sopt.response.SuccessCode;
 import org.sopt.service.PostService;
 import org.springframework.data.domain.Page;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PatchMapping;
@@ -33,10 +35,10 @@ public class PostController implements PostControllerDocs{
 		this.postService = postService;
 	}
 
-	@PostMapping(path="/member/{memberId}/post")
+	@PostMapping(path="/post")
 	public ResponseEntity<ApiResponse<Void>> createPost(
 		@Valid @RequestBody PostCreateRequest request,
-		@PathVariable Long memberId) {
+		@AuthenticationPrincipal Long memberId) {
 
 		Category category = Category.fromNumber(request.categoryNumber());
 
@@ -72,11 +74,11 @@ public class PostController implements PostControllerDocs{
 			.body(response);
 	}
 
-	@PatchMapping(path="/member/{memberId}/post/{postId}")
+	@PatchMapping(path="/post/{postId}")
 	public ResponseEntity<ApiResponse<Void>> updatePost(
 		@PathVariable(name="postId") long postId,
-		@PathVariable(name="memberId") long memberId,
-		@Valid @RequestBody PostUpdateRequest request) {
+		@Valid @RequestBody PostUpdateRequest request,
+		@AuthenticationPrincipal Long memberId) {
 
 		postService.updatePost(memberId, postId, request.title(), request.content());
 		ApiResponse<Void> response = ApiResponse.success(SuccessCode.POST_UPDATED);
@@ -85,10 +87,10 @@ public class PostController implements PostControllerDocs{
 			.body(response);
 	}
 
-	@DeleteMapping(path="/member/{memberId}/post/{postId}")
+	@DeleteMapping(path="/post/{postId}")
 	public ResponseEntity<ApiResponse<Void>> deletePost(
-		@PathVariable(name="memberId") long memberId,
-		@PathVariable(name="postId") long postId) {
+		@PathVariable(name="postId") long postId,
+		@AuthenticationPrincipal Long memberId) {
 		postService.deletePost(memberId, postId);
 		ApiResponse<Void> response = ApiResponse.success(SuccessCode.POST_DELETED);
 		return ResponseEntity

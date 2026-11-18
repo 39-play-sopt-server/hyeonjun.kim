@@ -7,6 +7,7 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.http.converter.HttpMessageNotReadableException;
 import org.springframework.web.bind.MethodArgumentNotValidException;
 import org.springframework.web.bind.MissingServletRequestParameterException;
+import org.springframework.web.bind.MissingRequestCookieException;
 import org.springframework.web.bind.annotation.ExceptionHandler;
 import org.springframework.web.bind.annotation.RestControllerAdvice;
 import org.springframework.web.method.annotation.HandlerMethodValidationException;
@@ -67,6 +68,11 @@ public class GlobalExceptionHandler {
 	) {
 		ApiResponse<Void> response = ApiResponse.failure(ErrorCode.INVALID_INPUT);
 		return ResponseEntity.status(response.getStatus()).body(response);
+	}
+
+	@ExceptionHandler(MissingRequestCookieException.class)
+	public ResponseEntity<ApiResponse<Void>> handleMissingRequestCookieException(MissingRequestCookieException e) {
+		return errorResponse(ErrorCode.INVALID_REFRESH_TOKEN);
 	}
 
 	private ResponseEntity<ApiResponse<Void>> errorResponse(ErrorCode errorCode) {

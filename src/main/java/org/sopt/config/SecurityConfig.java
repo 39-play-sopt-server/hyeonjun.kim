@@ -2,6 +2,7 @@ package org.sopt.config;
 
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
+import org.springframework.security.config.Customizer;
 import org.springframework.http.HttpMethod;
 import org.springframework.http.HttpStatus;
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
@@ -13,20 +14,29 @@ import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.security.web.SecurityFilterChain;
 import org.springframework.security.web.authentication.HttpStatusEntryPoint;
 import org.springframework.security.web.authentication.UsernamePasswordAuthenticationFilter;
+import org.sopt.repository.RefreshTokenRepository;
 
 @Configuration
 @EnableWebSecurity
 public class SecurityConfig {
 
 	private final JwtProvider jwtProvider;
+	private final RefreshTokenRepository refreshTokenRepository;
+	private final CustomAuthenticationEntryPoint customAuthenticationEntryPoint;
 
-	public SecurityConfig(JwtProvider jwtProvider) {
+	public SecurityConfig(
+		JwtProvider jwtProvider,
+		RefreshTokenRepository refreshTokenRepository,
+		CustomAuthenticationEntryPoint customAuthenticationEntryPoint) {
 		this.jwtProvider = jwtProvider;
+		this.refreshTokenRepository = refreshTokenRepository;
+		this.customAuthenticationEntryPoint = customAuthenticationEntryPoint;
 	}
 
 	@Bean
 	public SecurityFilterChain filterChain(HttpSecurity http) throws Exception {
 		return http
+			.cors(Customizer.withDefaults())
 			// CSRF 비활성화, Authorization 헤더로 보내면 CSRF의 전제 조건이 없기 때문
 			.csrf(AbstractHttpConfigurer::disable)
 			// 폼 로그인, HTTP Basic 비활성화
@@ -42,9 +52,9 @@ public class SecurityConfig {
 				.anyRequest().authenticated())
 			// 인증 실패 시 401 응답
 			.exceptionHandling(e -> e
-				.authenticationEntryPoint(new HttpStatusEntryPoint(HttpStatus.UNAUTHORIZED)))
+				.authenticationEntryPoint(customAuthenticationEntryPoint))
 			// JWT 인증 필터 추가
-			.addFilterBefore(new JwtAuthenticationFilter(jwtProvider),
+			.addFilterBefore(new JwtAuthenticationFilter(jwtProvider, refreshTokenRepository),
 				UsernamePasswordAuthenticationFilter.class)
 			.build();
 	}
