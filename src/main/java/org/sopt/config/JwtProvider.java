@@ -5,6 +5,7 @@ import java.util.UUID;
 
 import javax.crypto.SecretKey;
 
+import org.sopt.entity.Role;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Component;
 
@@ -29,7 +30,7 @@ public class JwtProvider {
 		this.refreshTokenExpiration = refreshTokenExpiration;
 	}
 
-	public String createToken(Long memberId, String type, long expiration) {
+	public String createToken(Long memberId, String type, long expiration, Role role) {
 		Date now = new Date();
 		Date expirationDate = new Date(now.getTime() + expiration);
 
@@ -37,27 +38,19 @@ public class JwtProvider {
 			.subject(String.valueOf(memberId))
 			.id(UUID.randomUUID().toString())
 			.claim("type", type)
+			.claim("role", role.name())
 			.issuedAt(now)
 			.expiration(expirationDate)
 			.signWith(secretKey)
 			.compact();
 	}
 
-	public String createAccessToken(Long memberId, String sessionId) {
-		Date now = new Date();
-		return Jwts.builder()
-			.subject(String.valueOf(memberId))
-			.claim("type", "ACCESS")
-			.claim("sessionId", sessionId)
-			.id(UUID.randomUUID().toString())
-			.issuedAt(now)
-			.expiration(new Date(now.getTime() + accessTokenExpiration))
-			.signWith(secretKey)
-			.compact();
+	public String createAccessToken(Long memberId, Role role) {
+		return createToken(memberId, "ACCESS",  accessTokenExpiration, role);
 	}
 
-	public String createRefreshToken(Long memberId) {
-		return createToken(memberId, "REFRESH",  refreshTokenExpiration);
+	public String createRefreshToken(Long memberId, Role role) {
+		return createToken(memberId, "REFRESH",  refreshTokenExpiration, role);
 	}
 
 	public Claims parseClaims(String token) {
@@ -76,8 +69,8 @@ public class JwtProvider {
 		return parseClaims(token).get("type", String.class);
 	}
 
-	public String getSessionId(String token) {
-		return parseClaims(token).get("sessionId", String.class);
+	public Role getRole(String token) {
+		return Role.valueOf(parseClaims(token).get("role", String.class));
 	}
 
 	public boolean validateToken(String token) {

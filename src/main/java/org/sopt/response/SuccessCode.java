@@ -14,6 +14,7 @@ public enum SuccessCode {
 	REISSUE_SUCCESS(200, "토큰 재발급에 성공했습니다."),
 	LOGOUT_SUCCESS(200, "로그아웃에 성공했습니다."),
 	WITHDRAW_SUCCESS(200, "회원 탈퇴에 성공했습니다."),
+	MEMBER_LIST_FOUND(200, "회원 목록 조회에 성공했습니다."),
 	EXIT(200, "종료");
 
 	private final int status;

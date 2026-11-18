@@ -8,6 +8,7 @@ import org.sopt.dto.response.TokenResponse;
 import org.sopt.entity.Member;
 import org.sopt.entity.RefreshToken;
 import org.sopt.entity.RefreshTokenHasher;
+import org.sopt.entity.Role;
 import org.sopt.exception.EmailAlreadyExistsException;
 import org.sopt.exception.InvalidCredentialException;
 import org.sopt.exception.InvalidRefreshTokenException;
@@ -46,11 +47,11 @@ public class AuthService {
 	}
 
 	@Transactional
-	public SignUpResponse signup(String name, String email, String password) {
+	public SignUpResponse signup(String name, String email, String password, Role role) {
 		if (memberRepository.existsByEmail(email)) {
 			throw new EmailAlreadyExistsException();
 		}
-		Member member = new Member(name, email, passwordEncoder.encode(password));
+		Member member = new Member(name, email, passwordEncoder.encode(password), role);
 		memberRepository.save(member);
 		return new SignUpResponse(member.getId());
 	}
@@ -106,8 +107,8 @@ public class AuthService {
 
 	private TokenResponse issueTokens(Member member) {
 		String sessionId = UUID.randomUUID().toString();
-		String accessToken = jwtProvider.createAccessToken(member.getId(), sessionId);
-		String refreshToken = jwtProvider.createRefreshToken(member.getId());
+		String accessToken = jwtProvider.createAccessToken(member.getId(), member.getRole());
+		String refreshToken = jwtProvider.createRefreshToken(member.getId(), member.getRole());
 
 		String tokenHash = refreshTokenHasher.hash(refreshToken);
 
